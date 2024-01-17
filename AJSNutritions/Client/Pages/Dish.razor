@@ -1,0 +1,116 @@
+﻿@page "/dish"
+@page "/dish/{id:int}"
+@inject IDishService DishService
+@inject NavigationManager NavigationManager
+
+@if(Id.HasValue)
+{
+	<PageTitle>Edit @dish.Name</PageTitle>
+	<h3>Edit @dish.Name</h3>
+}
+else
+{
+	<PageTitle>Create a new Dish</PageTitle>
+	<h3>Create a new Dish</h3>
+}
+
+<EditForm Model="dish" OnSubmit="HandleSubmit">
+	<div>
+		<label for="name">Name</label>
+		<InputText id="name" @bind-Value="dish.Name" class="form-control"/>
+	</div>
+	<div>
+		<label for="dishType">Dish Type</label>
+		<select id="dishType" class="form-control" @bind="@SelectedDishTypeID">
+			@foreach (var dishType in DishTypes)
+			{
+				<option value="@dishType.Id">@dishType.Name</option>
+			}
+		</select>
+	</div>
+	<div>
+		<label for="calories">Calories</label>
+		<InputNumber id="calories" @bind-Value="dish.Calories" class="form-control" />
+	</div>
+	<div>
+		<label for="desc">Description</label>
+		<InputText id="desc" @bind-Value="dish.Description" class="form-control" />
+	</div>
+	<br />
+	<button type="submit" class="btn btn-primary">@_confirmText</button>
+	<button type="button" class="btn btn-secondary" @onclick="Cancel">Cancel</button>
+</EditForm>
+	
+
+@code {
+	[Parameter]
+	public int? Id { get; set; }
+
+	public AJSNutritions.Shared.Dish dish { get; set; } = new AJSNutritions.Shared.Dish { Name = "New Dish" };
+
+	string _confirmText = "Create";
+
+	string selectedDishTypeID;
+
+	string SelectedDishTypeID
+	{
+		get => selectedDishTypeID;
+		set { selectedDishTypeID = value; }
+	}
+
+	List<DishType> DishTypes = new List<DishType>
+	{
+		new DishType(1, "Breakfast"),
+		new DishType(2, "Lunch"),
+		new DishType(3, "Dinner"),
+		new DishType(4, "Snack")
+	};
+
+
+	protected override async Task OnParametersSetAsync()
+	{
+		if (Id.HasValue)
+		{
+			var result = await DishService.GetDishById(Id.Value);
+
+			if (result != null)
+			{
+				dish = result;
+				_confirmText = "Save";
+			}
+			else
+			{
+				NavigationManager.NavigateTo("/dish");
+			}
+		}
+	}
+
+	async Task HandleSubmit()
+	{
+		if (dish.Id == 0)
+		{
+			await DishService.CreateDish(dish);
+		}
+		else
+		{
+			await DishService.UpdateDish(dish.Id, dish);
+		}
+	}
+
+	private void Cancel()
+	{
+		NavigationManager.NavigateTo("/dishes");
+	}
+
+	public class DishType
+	{
+		public DishType(int id, string name)
+		{
+			Id = id;
+			Name = name;
+		}
+
+		public int Id { get; set; }
+		public string Name { get; set; }
+	}
+}

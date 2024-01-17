@@ -1,0 +1,82 @@
+﻿@page "/dishes"
+@inject IDishService DishService
+@inject NavigationManager NavigationManager
+
+<h3>Dishes</h3>
+
+<table class="table">
+	<thead>
+	<tr>
+		<th>Name</th>
+		<th>Description</th>
+		<th></th>
+	</tr>
+	</thead>
+	<tbody>
+
+	@foreach (var dish in DishService.Dishes)
+	{
+		<tr>
+			<td>@dish.Name</td>
+			<td>@dish.Description</td>
+			<td>
+				<button class="btn btn-primary"
+				        @onclick="() => ShowDish(dish.Id)">
+					<i class="oi oi-pencil"></i>
+				</button>
+				<button class="btn btn-danger"
+				        @onclick="() => DeleteDish(dish.Id)">
+					<i class="oi oi-trash"></i>
+				</button>
+			</td>
+		</tr>
+	}
+	</tbody>
+</table>
+<button class="btn btn-primary"
+        @onclick="CreateNewDish">
+	Create New Dish
+</button>
+
+<Confirm
+	@ref="DeleteConfirmation"
+	ConfirmationChanged="ConfirmDelete_Click"
+	ConfirmationMessage=@($"Are you sure you want to delete:")>
+
+</Confirm>
+
+@code {
+	private ConfirmBase DeleteConfirmation { get; set; }
+	private int Id { get; set; }
+
+	protected override async Task OnInitializedAsync()
+	{
+		await DishService.GetDishes();
+	}
+
+	void ShowDish(int id)
+	{
+		NavigationManager.NavigateTo($"/dish/{id}");
+	}
+
+	private void CreateNewDish()
+	{
+		NavigationManager.NavigateTo("/dish");
+	}
+
+	private async void DeleteDish(int id)
+	{
+		Id = id;
+		DeleteConfirmation.Show();
+	}
+
+	private async void ConfirmDelete_Click(bool deleteConfirmed)
+	{
+		if (deleteConfirmed)
+		{
+			await DishService.DeleteDish(Id);
+			await DishService.GetDishes();
+			await InvokeAsync(StateHasChanged);
+		}
+	}
+}

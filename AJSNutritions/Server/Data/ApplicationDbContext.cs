@@ -1,4 +1,5 @@
 ﻿using AJSNutritions.Server.Models;
+using AJSNutritions.Shared;
 using Duende.IdentityServer.EntityFramework.Options;
 using Microsoft.AspNetCore.ApiAuthorization.IdentityServer;
 using Microsoft.EntityFrameworkCore;
@@ -13,5 +14,7 @@ namespace AJSNutritions.Server.Data
             IOptions<OperationalStoreOptions> operationalStoreOptions) : base(options, operationalStoreOptions)
         {
         }
+
+        public DbSet<Dish> Dishes { get; set; } = null!;
     }
 }
