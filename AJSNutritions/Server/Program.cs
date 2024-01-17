@@ -1,8 +1,12 @@
 using AJSNutritions.Server.Data;
 using AJSNutritions.Server.Models;
+using AJSNutritions.Server.Services.DishService;
+using IdentityModel;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
+using System.IdentityModel.Tokens.Jwt;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,16 +17,26 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
-    .AddEntityFrameworkStores<ApplicationDbContext>();
+	.AddRoles<IdentityRole>()
+	.AddEntityFrameworkStores<ApplicationDbContext>();
 
 builder.Services.AddIdentityServer()
-    .AddApiAuthorization<ApplicationUser, ApplicationDbContext>();
+    .AddApiAuthorization<ApplicationUser, ApplicationDbContext>(options =>
+    {
+	    const string OpenId = "openid";
 
-builder.Services.AddAuthentication()
-    .AddIdentityServerJwt();
+		options.IdentityResources[OpenId].UserClaims.Add(JwtClaimTypes.Role);
+	    options.ApiResources.Single().UserClaims.Add(JwtClaimTypes.Role);
+	});
+
+JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Remove(JwtClaimTypes.Role);
+
+builder.Services.AddAuthentication().AddIdentityServerJwt();
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
+
+builder.Services.AddScoped<IDishService, DishService>();
 
 var app = builder.Build();
 
@@ -54,4 +68,25 @@ app.MapRazorPages();
 app.MapControllers();
 app.MapFallbackToFile("index.html");
 
+// Seed data
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+	var context = services.GetRequiredService<ApplicationDbContext>();
+	var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
+	var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+
+	context.Database.Migrate();
+
+	try
+	{
+		DataSeeder.SeedData(context, userManager, roleManager).Wait();
+	}
+	catch (Exception ex)
+	{
+		var logger = services.GetRequiredService<ILogger<Program>>();
+		logger.LogError(ex, "An error occurred seeding the DB.");
+	}
+}
+    
 app.Run();
