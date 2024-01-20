@@ -1,0 +1,110 @@
+﻿@page "/foodlog"
+@page "/foodlog/{id:int}"
+@inject IDishService DishService
+@inject IFoodLogService FoodLogService
+@inject NavigationManager NavigationManager
+
+@if(Id.HasValue)
+{
+	<PageTitle>Edit </PageTitle>
+	<h3>Edit Food Log </h3>
+}
+else
+{
+	<PageTitle>Create a new Food Log</PageTitle>
+	<h3>Create a new Food Log</h3>
+}
+<EditForm Model="foodLog" OnSubmit="HandleSubmit">
+	
+	
+	@* <div> *@
+	@* 	<label for="name">Name</label> *@
+	@* 	<InputText id="name" @bind-Value="foodLog.Name" class="form-control" /> *@
+	@* </div> *@
+	<div>
+		<label for="date">Date</label>
+		<InputDate id="date" @bind-Value="foodLog.Date" class="form-control" />
+	</div>
+	<div>
+		<label for="dish">Dish</label>
+		<select id="dish" class="form-control" @bind="@SelectedDishID">
+			@foreach (var dish in DishService.Dishes)
+			{
+				<option value="@dish.Id">@dish.Name</option>
+			}
+		</select>
+	</div>
+	<br />
+	<button type="submit" class="btn btn-primary">@_confirmText</button>
+	<button type="button" class="btn btn-secondary" @onclick="Cancel">Cancel</button>
+
+</EditForm>
+
+
+@code {
+[Parameter]
+	public int? Id { get; set; }
+
+	public AJSNutritions.Shared.FoodLog foodLog { get; set; } = new AJSNutritions.Shared.FoodLog { Date = DateTime.Now };
+
+	string _confirmText = "Create New Food Log";
+
+	string selectedFoodLogID;
+	int selectedDishID;
+
+	int SelectedDishID
+	{
+		get => selectedDishID;
+		set { selectedDishID = value; }
+	}
+
+	string SelectedFoodLogID
+	{
+		get => selectedFoodLogID;
+		set { selectedFoodLogID = value; }
+	}
+
+	// When loaded, get the list of dishes
+	protected override async Task OnInitializedAsync()
+	{
+		await DishService.GetDishes();
+	}
+
+	protected override async Task OnParametersSetAsync()
+	{
+		// The food log will be edited if the food id is provided in the URL.
+		if (Id.HasValue)
+		{
+			var result = await FoodLogService.GetFoodLogById(Id.Value);
+			// If the food log is not found, navigate back to the food log list.
+			if (result == null)
+			{
+				NavigationManager.NavigateTo("/foodlogs");
+			}
+			else 			
+			{
+				foodLog = result;
+				_confirmText = "Save";
+			}
+		}
+	}
+
+	async Task HandleSubmit()
+	{
+		if (Id.HasValue)
+		{	// Update the food log
+			await FoodLogService.UpdateFoodLog(Id.Value, foodLog);
+		}
+		else
+		{  // Create the food log
+			await FoodLogService.CreateFoodLog(foodLog);
+		}
+		// After creating a new food or editing an existing log, navigate to the food log list page
+		NavigationManager.NavigateTo("/foodlogs");
+	}
+
+	void Cancel()
+	{	// Navigate back to the food log list
+		NavigationManager.NavigateTo("/foodlogs");
+	}
+}
