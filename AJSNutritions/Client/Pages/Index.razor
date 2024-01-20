@@ -1,4 +1,5 @@
 ﻿@page "/"
+@using AJSNutritions.Shared
 
 <PageTitle>Index</PageTitle>
 
@@ -6,4 +7,14 @@
 
 Welcome to AJS Nutritions.
 
-<SurveyPrompt Title="How is Blazor working for you?" />
+<AuthorizeView Roles=@($"{Constants.Roles.User}")>
+	<Authorized>
+		<FoodLogs />
+	</Authorized>
+</AuthorizeView>
+
+<AuthorizeView Roles=@($"{Constants.Roles.Admin}, {Constants.Roles.Staff}")>
+<Authorized>
+	<h3>This is admin content</h3>
+</Authorized>
+</AuthorizeView>
