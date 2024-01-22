@@ -19,4 +19,5 @@ builder.Services.AddScoped<IFoodLogService, FoodLogService>();
 builder.Services.AddApiAuthorization();
 
 
+
 await builder.Build().RunAsync();

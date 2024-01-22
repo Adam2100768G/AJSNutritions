@@ -13,29 +13,33 @@ public class FoodLogService : IFoodLogService
 		_httpClient = httpClient;
 	}
 
-	public List<FoodLog> FoodLogs { get; set; } = new();
+	public List<FoodLogDto> FoodLogs { get; set; } = new();
 
 
-	public async Task GetFoodLogs()
+	public async Task GetFoodLogs(string userId)
 	{
-		var result = await _httpClient.GetAsync("api/foodlog");
+		var result = await _httpClient.GetAsync($"api/foodlog/all/{userId}");
 		if (result.IsSuccessStatusCode)
 		{
-			FoodLogs = await result.Content.ReadFromJsonAsync<List<FoodLog>>();
+			FoodLogs = await result.Content.ReadFromJsonAsync<List<FoodLogDto>>();
 		}
 	}
 
-	public async Task<FoodLog?> GetFoodLogById(int id)
+	public async Task<FoodLogDto?> GetFoodLogById(int id)
 	{
-		return await _httpClient.GetFromJsonAsync<FoodLog>($"api/foodlog/{id}");
+		return await _httpClient.GetFromJsonAsync<FoodLogDto>($"api/foodlog/{id}");
 	}
 
-	public async Task CreateFoodLog(FoodLog foodLog)
+	public async Task<FoodLogDto?> CreateFoodLog(FoodLogDto foodLogDto)
 	{
-		var response = await _httpClient.PostAsJsonAsync("api/foodlog", foodLog);
+		var response = await _httpClient.PostAsJsonAsync("api/foodlog", foodLogDto);
 		if (response.IsSuccessStatusCode)
 		{
-			FoodLogs.Add(foodLog);
+			var res = await response.Content.ReadFromJsonAsync<FoodLogDto>();
+
+			FoodLogs.Add(res);
+
+			return res;
 		}
 		else
 		{
@@ -43,15 +47,15 @@ public class FoodLogService : IFoodLogService
 		}
 	}
 
-	public async Task UpdateFoodLog(int id, FoodLog foodLog)
+	public async Task UpdateFoodLog(int id, FoodLogDto foodLogDto)
 	{
-		var response = await _httpClient.PutAsJsonAsync($"api/foodlog/{id}", foodLog);
+		var response = await _httpClient.PutAsJsonAsync($"api/foodlog/{id}", foodLogDto);
 		if (response.IsSuccessStatusCode)
 		{
 			var index = FoodLogs.FindIndex(f => f.Id == id);
 			if (index != -1)
 			{
-				FoodLogs[index] = foodLog;
+				FoodLogs[index] = foodLogDto;
 			}
 		}
 		else

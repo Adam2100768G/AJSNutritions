@@ -4,15 +4,15 @@ namespace AJSNutritions.Client.Services.FoodLogService
 {
 	public interface IFoodLogService
 	{
-		List<FoodLog> FoodLogs { get; set; }
+		List<FoodLogDto> FoodLogs { get; set; }
 
-		Task GetFoodLogs();
+		Task GetFoodLogs(string userId);
 
-		Task<FoodLog?> GetFoodLogById(int id);
+		Task<FoodLogDto?> GetFoodLogById(int id);
 
-		Task CreateFoodLog(FoodLog foodLog);
+		Task<FoodLogDto?> CreateFoodLog(FoodLogDto foodLogDto);
 
-		Task UpdateFoodLog(int id, FoodLog foodLog);
+		Task UpdateFoodLog(int id, FoodLogDto foodLogDto);
 
 		Task DeleteFoodLog(int id);
 	}
