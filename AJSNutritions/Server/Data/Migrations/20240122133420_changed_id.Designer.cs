@@ -4,6 +4,7 @@ using AJSNutritions.Server.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AJSNutritions.Server.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240122133420_changed_id")]
+    partial class changed_id
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -434,13 +437,13 @@ namespace AJSNutritions.Server.Data.Migrations
 
             modelBuilder.Entity("AJSNutritions.Server.Models.FoodLog", b =>
                 {
-                    b.HasOne("AJSNutritions.Server.Models.ApplicationUser", "ApplicationUser")
+                    b.HasOne("AJSNutritions.Server.Models.ApplicationUser", "User")
                         .WithMany()
                         .HasForeignKey("ApplicationUserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("ApplicationUser");
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("AJSNutritions.Server.Models.FoodLoggedItem", b =>

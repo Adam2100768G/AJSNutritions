@@ -16,5 +16,13 @@ namespace AJSNutritions.Server.Data
         }
 
         public DbSet<Dish> Dishes { get; set; } = null!;
+
+        // add a table for the food log in the database
+        public DbSet<FoodLog> FoodLogs { get; set; } = null!;
+
+        // add a table for the food logged item in the database
+        public DbSet<FoodLoggedItem> FoodLoggedItems { get; set; } = null!;
+
+
     }
 }

@@ -1,5 +1,92 @@
-﻿<h3>FoodLogs</h3>
+﻿@inject IFoodLogService FoodLogService
+@inject NavigationManager NavigationManager
+
+<h3>Food Log</h3>
+
+<table class="table">
+	<thead>
+	<tr>
+		<th>Date</th>
+		<th></th>
+	</tr>
+	</thead>
+	<tbody>
+
+	@foreach (var foodLog in FoodLogService.FoodLogs)
+	{
+		<tr>
+			<td>@foodLog.Date</td>
+			<td>
+				<button class="btn btn-primary"
+				        @onclick="() => ShowFoodLog(foodLog.Id)">
+					<i class="oi oi-pencil"></i>
+				</button>
+				<button class="btn btn-danger"
+				        @onclick="() => DeleteFoodLog(foodLog.Id)">
+					<i class="oi oi-trash"></i>
+				</button></td>
+		</tr>
+	}
+	</tbody>
+</table>
+<button class="btn btn-primary"
+        @onclick="() => CreateFoodLog()">
+	New Food Log
+</button>
+
+<Confirm @ref="DeleteConfirmation"
+		 ConfirmationChanged="ConfirmDelete_Click"
+		 ConfirmationMessage=@($"Are you sure you want to delete:")>
+
+</Confirm>
 
 @code {
+	private ConfirmBase DeleteConfirmation { get; set; }
+	private int Id { get; set; }
 
+	[CascadingParameter] private Task<AuthenticationState>? AuthenticationStateTask { get; set; }
+
+
+	protected override async Task OnInitializedAsync()
+	{
+		// Get the user's food logs
+		await GetUserLogs();
+
+	}
+
+	void ShowFoodLog(int id)
+	{
+		NavigationManager.NavigateTo($"/foodlog/{id}");
+	}
+
+	private void CreateFoodLog()
+	{
+		NavigationManager.NavigateTo($"/foodlog"); }
+
+	private void DeleteFoodLog(int id)
+	{
+		Id = id;
+		DeleteConfirmation.Show();
+	}
+
+	private async Task ConfirmDelete_Click(bool deleteConfirmed)
+	{
+		if (deleteConfirmed)
+		{
+			await FoodLogService.DeleteFoodLog(Id);
+			await GetUserLogs();
+		}
+	}
+
+	private async Task GetUserLogs()
+	{
+		var authState = await AuthenticationStateTask;
+		var user = authState.User;
+
+		if (user.Identity is not null && user.Identity.IsAuthenticated)
+		{
+			await FoodLogService.GetFoodLogs(user.Identity.Name);
+		}
+	}
 }
+

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
 using System.IdentityModel.Tokens.Jwt;
+using AJSNutritions.Server.Services.FoodLogService;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -37,6 +38,7 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 
 builder.Services.AddScoped<IDishService, DishService>();
+builder.Services.AddScoped<IFoodLogService, FoodLogService>();
 
 var app = builder.Build();
 
