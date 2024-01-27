@@ -4,51 +4,53 @@
 
 .top-row {
     height: 3.5rem;
-    background-color: rgba(0,0,0,0.4);
+    background-color: #e74c3c; /* Change to a food-related color */
 }
 
 .navbar-brand {
-    font-size: 1.1rem;
+    font-size: 1.5rem; /* Increase font size for emphasis */
+    color: #fff; /* Set text color to white */
 }
 
 .oi {
     width: 2rem;
-    font-size: 1.1rem;
-    vertical-align: text-top;
-    top: -2px;
+    font-size: 1.5rem; /* Increase icon size for emphasis */
+    vertical-align: middle; /* Adjust vertical alignment */
+    top: 0; /* Reset top value */
 }
 
 .nav-item {
-    font-size: 0.9rem;
-    padding-bottom: 0.5rem;
+    font-size: 1rem; /* Increase font size for better readability */
+    padding: 0.5rem 1rem; /* Add padding for a more spaced-out look */
 }
 
     .nav-item:first-of-type {
-        padding-top: 1rem;
+        margin-top: 1rem; /* Use margin-top instead of padding-top */
     }
 
     .nav-item:last-of-type {
-        padding-bottom: 1rem;
+        margin-bottom: 1rem; /* Use margin-bottom instead of padding-bottom */
     }
 
     .nav-item ::deep a {
-        color: #d7d7d7;
-        border-radius: 4px;
-        height: 3rem;
+        color: #333; /* Change text color to a darker shade */
+        background-color: #ecf0f1; /* Set a light background color */
+        border-radius: 8px; /* Increase border-radius for rounded corners */
+        height: 3.5rem; /* Maintain height for consistency */
         display: flex;
         align-items: center;
-        line-height: 3rem;
+        line-height: 3.5rem; /* Center text vertically */
     }
 
-.nav-item ::deep a.active {
-    background-color: rgba(255,255,255,0.25);
-    color: white;
-}
+        .nav-item ::deep a.active {
+            background-color: #c0392b; /* Darken active item background color */
+            color: white;
+        }
 
-.nav-item ::deep a:hover {
-    background-color: rgba(255,255,255,0.1);
-    color: white;
-}
+        .nav-item ::deep a:hover {
+            background-color: #d35400; /* Change hover background color to a related color */
+            color: white;
+        }
 
 @media (min-width: 641px) {
     .navbar-toggler {
@@ -56,12 +58,10 @@
     }
 
     .collapse {
-        /* Never collapse the sidebar for wide screens */
         display: block;
     }
-    
+
     .nav-scrollable {
-        /* Allow sidebar to scroll for tall menus */
         height: calc(100vh - 3.5rem);
         overflow-y: auto;
     }
