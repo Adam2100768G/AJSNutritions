@@ -18,19 +18,24 @@
 				<div class="row mt-2">
 					<EditForm Model="ProfileData" OnSubmit="HandleSubmit">
 						<div class="col-md-15">
-							<label for="date">Date Of Birth</label>
+							<label for="DateOfBirth">Date Of Birth</label>
 							<InputDate id="date" @bind-Value="ProfileData.DateOfBirth" class="form-control" />
 						</div>
 						<div class="col-md-15">
-							<label for="height">Height</label>
+							<label for="height">Height(cm)</label>
 							<InputNumber id="height" @bind-Value="ProfileData.Height" class="form-control"/>
 						</div>
 						<div class="col-md-15">
-							<label for="weight">Weight</label>
+							<label for="weight">Weight(kg)</label>
 							<InputNumber id="weight" @bind-Value="ProfileData.Weight" class="form-control"/>
 						</div>
 						<div class="col-md-15">
+							<label for="Bmi">BMI</label>
 							<div>@ProfileData.Bmi</div>
+						</div>
+						<div class="col-md-15">
+							<label for="Address">Address</label>
+							<InputNumber id="Address" @bind-Value="ProfileData.Address" class="form-control" />
 						</div>
 						<div>
 							<label for="genderType">Gender</label>
@@ -40,6 +45,10 @@
 									<option value="@genderType.Id">@genderType.Name</option>
 								}
 							</select>
+						</div>
+						<div class="col-md-15">
+							<label for="ActivityRate">Address</label>
+							<InputNumber id="Address" @bind-Value="ProfileData.Address" class="form-control" />
 						</div>
 						<button class="btn btn-primary profile-button" type="submit">Save Profile</button>
 					</EditForm>

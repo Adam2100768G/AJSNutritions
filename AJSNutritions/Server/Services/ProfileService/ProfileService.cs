@@ -27,6 +27,8 @@ public class ProfileService : IProfileService
 		return new Profile
 		{
 			UserName = user.UserName,
+			FirstName = user.FirstName,
+			LastName = user.LastName,
 			DateOfBirth = user.DateOfBirth,
 			Address = user.Address,
 			Gender = user.Gender,
@@ -40,6 +42,7 @@ public class ProfileService : IProfileService
 			TargetYear = user.TargetYear,
 			TargetWeight = user.TargetWeight,
 			TargetBmi = user.TargetBmi
+
 		};
 	}
 
@@ -52,6 +55,8 @@ public class ProfileService : IProfileService
 		}
 
 		toUpdate.DateOfBirth = profile.DateOfBirth;
+		toUpdate.FirstName = profile.FirstName;
+		toUpdate.LastName = profile.LastName;
 		toUpdate.Address = profile.Address;
 		toUpdate.Gender = profile.Gender;
 		toUpdate.Weight = profile.Weight;
