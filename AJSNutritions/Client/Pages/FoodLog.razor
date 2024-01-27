@@ -15,12 +15,6 @@ else
 	<h3>Create a new Food Log</h3>
 }
 <EditForm Model="FoodLogDto" OnSubmit="HandleSubmit">
-	
-	
-	@* <div> *@
-	@* 	<label for="name">Name</label> *@
-	@* 	<InputText id="name" @bind-Value="FoodLogDto.Name" class="form-control" /> *@
-	@* </div> *@
 	<div>
 		<label for="date">Date</label>
 		<InputDate id="date" @bind-Value="FoodLogDto.Date" class="form-control" />

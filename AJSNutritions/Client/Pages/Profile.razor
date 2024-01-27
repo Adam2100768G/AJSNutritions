@@ -1,14 +1,14 @@
 ﻿@page "/profile"
+@inject IProfileService ProfileService
 
-@using AJSNutritions.Shared
-@using System.Security.Claims
+@using AJSNutritions.Client.Services.ProfileService
 
 <PageTitle>Profile</PageTitle>
 
 <div class="container rounded bg-white mt-5 mb-5">
 	<div class="row">
 		<div class="col-md-3 border-right">
-			<div class="d-flex flex-column align-items-center text-center p-3 py-5"><img class="rounded-circle mt-5" width="150px" src="https://st3.depositphotos.com/15648834/17930/v/600/depositphotos_179308454-stock-illustration-unknown-person-silhouette-glasses-profile.jpg"><span class="font-weight-bold">Full Name</span><span class="text-black-50">draft@gmail.com</span><span> </span></div>
+			<div class="d-flex flex-column align-items-center text-center p-3 py-5"><img class="rounded-circle mt-5" width="150px" src="https://st3.depositphotos.com/15648834/17930/v/600/depositphotos_179308454-stock-illustration-unknown-person-silhouette-glasses-profile.jpg"><span class="font-weight-bold">Full Name</span><span class="text-black-50">@UserName</span><span> </span></div>
 		</div>
 		<div class="col-md-5 border-right">
 			<div class="p-3 py-5">
@@ -16,26 +16,45 @@
 					<h4 class="text-right">Profile Settings</h4>
 				</div>
 				<div class="row mt-2">
-					<div class="col-md-15"><label class="labels">Full Name</label><input type="text" class="form-control" placeholder="full name" value=""></div>
+					<EditForm Model="ProfileData" OnSubmit="HandleSubmit">
+						<div class="col-md-15">
+							<label for="date">Date Of Birth</label>
+							<InputDate id="date" @bind-Value="ProfileData.DateOfBirth" class="form-control" />
+						</div>
+						<div class="col-md-15">
+							<label for="height">Height</label>
+							<InputNumber id="height" @bind-Value="ProfileData.Height" class="form-control"/>
+						</div>
+						<div class="col-md-15">
+							<label for="weight">Weight</label>
+							<InputNumber id="weight" @bind-Value="ProfileData.Weight" class="form-control"/>
+						</div>
+						<div class="col-md-15">
+							<div>@ProfileData.Bmi</div>
+						</div>
+						<div>
+							<label for="genderType">Gender</label>
+							<select id="genderType" class="form-control" @bind="@ProfileData.Gender">
+								@foreach (var genderType in GenderTypes)
+								{
+									<option value="@genderType.Id">@genderType.Name</option>
+								}
+							</select>
+						</div>
+						<button class="btn btn-primary profile-button" type="submit">Save Profile</button>
+					</EditForm>
 				</div>
-				<div class="row mt-3">
-					<div class="col-md-15"><label class="labels">Email</label>@_roles</div>
-					<div class="col-md-15"><label class="labels">Date of birth</label><input type="text" class="form-control" placeholder="enter date of birth" value=""></div>
-					<div class="col-md-15"><label class="labels">Address</label><input type="text" class="form-control" placeholder="enter address" value=""></div>
-					<div class="col-md-15"><label class="labels">Weight</label><input type="text" class="form-control" placeholder="enter weight" value=""></div>
-					<div class="col-md-15"><label class="labels">Height</label><input type="text" class="form-control" placeholder="enter height" value=""></div>
-					<div class="col-md-15"><label class="labels">Bmi</label><input type="text" class="form-control" placeholder="enter bmi" value=""></div>
-					<div class="col-md-15"><label class="labels">gender</label><input type="text" class="form-control" placeholder="enter gender" value=""></div>
-				</div>
-				<div class="mt-5 text-center"><button class="btn btn-primary profile-button" type="button">Save Profile</button></div>
 			</div>
 		</div>
 	</div>
 </div>
 
+
 @code {
-	// Just testing
-	private string? _roles;
+
+	public string? UserName { get; set; }
+	public string? Email { get; set; }
+	private AJSNutritions.Shared.Profile ProfileData = new AJSNutritions.Shared.Profile { };
 
 	[CascadingParameter] private Task<AuthenticationState>? AuthenticationStateTask { get; set; }
 
@@ -48,14 +67,47 @@
 
 			if (user.Identity is not null && user.Identity.IsAuthenticated)
 			{
-				var isAdmin = user.IsInRole(Constants.Roles.Admin);
-				var isUser = user.IsInRole(Constants.Roles.User);
-				var isStaff = user.IsInRole(Constants.Roles.Staff);
+				UserName = user.Identity.Name;
 
-				_roles = $"Admin?={isAdmin}, Staff?={isStaff} User?={isUser}";
+				AJSNutritions.Shared.Profile res = await ProfileService.GetByUserName(UserName);
+
+				if (res != null)
+				{
+					ProfileData = res;
+				}
 			}
 		}
 	}
 
+	async Task HandleSubmit()
+	{
+		await ProfileService.Update(UserName, ProfileData);
+		AJSNutritions.Shared.Profile res = await ProfileService.GetByUserName(UserName);
+
+		if (res != null)
+		{
+			ProfileData = res;
+		}
+	}
+
+	List<GenderType> GenderTypes = new List<GenderType>
+	{
+		new GenderType(id: 1, name: "Male"),
+		new GenderType(id: 2, name: "Female"),
+		new GenderType(id: 3, name: "Apache Helicopter"),
+		new GenderType(id: 4, name: "Other")
+	};
+
+	public class GenderType 	
+	{
+		public GenderType(int id, string name)
+		{
+			Id = id;
+			Name = name;
+		}
+
+		public int Id { get; set; }
+		public string Name { get; set; }
+	}
 }
 
