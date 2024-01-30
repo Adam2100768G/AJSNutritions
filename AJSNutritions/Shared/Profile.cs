@@ -27,13 +27,11 @@ public class Profile
 
 	public string MedicalHistory { get; set; }
 
-	public string TargetMonth { get; set; }
+	public DateTime TargetDate { get; set; }
 
-	public string TargetYear { get; set; }
+	public int TargetWeight { get; set; }
 
-	public string TargetWeight { get; set; }
-
-	public string TargetBmi { get; set; }
+	public double TargetBmi { get; set; }
 
 
 }

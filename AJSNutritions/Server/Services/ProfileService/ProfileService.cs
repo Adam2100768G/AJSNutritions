@@ -38,8 +38,7 @@ public class ProfileService : IProfileService
 			Allergies = user.Allergies,
 			ActivityRate = user.ActivityRate,
 			MedicalHistory = user.MedicalHistory,
-			TargetMonth = user.TargetMonth,
-			TargetYear = user.TargetYear,
+			TargetDate = user.TargetDate,
 			TargetWeight = user.TargetWeight,
 			TargetBmi = user.TargetBmi
 
@@ -65,8 +64,7 @@ public class ProfileService : IProfileService
 		toUpdate.Allergies = profile.Allergies;
 		toUpdate.ActivityRate = profile.ActivityRate;
 		toUpdate.MedicalHistory = profile.MedicalHistory;
-		toUpdate.TargetMonth = profile.TargetMonth;
-		toUpdate.TargetYear = profile.TargetYear;
+		toUpdate.TargetDate = profile.TargetDate;
 		toUpdate.TargetWeight = profile.TargetWeight;
 		toUpdate.TargetBmi = profile.TargetBmi;
 
