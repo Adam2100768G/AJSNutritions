@@ -2,7 +2,7 @@
 
 namespace AJSNutritions.Client.Services.FoodLogService
 {
-	public interface IFoodLogService
+    public interface IFoodLogService
 	{
 		List<FoodLogDto> FoodLogs { get; set; }
 

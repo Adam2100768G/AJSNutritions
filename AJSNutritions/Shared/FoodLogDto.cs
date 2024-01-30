@@ -4,9 +4,9 @@ namespace AJSNutritions.Shared;
 
 public class FoodLogDto
 {
-	public int Id { get; set; }
+    public int Id { get; set; }
 
-	public DateTime Date { get; set; } = new();
+    public DateTime Date { get; set; } = new();
 
-	public String UserName { get; set; } = String.Empty;
+    public string UserName { get; set; } = string.Empty;
 }
