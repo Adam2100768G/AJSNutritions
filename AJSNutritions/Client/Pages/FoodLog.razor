@@ -1,6 +1,5 @@
 ﻿@page "/foodlog"
 @page "/foodlog/{id:int}"
-@using AJSNutritions.Shared.Domain
 @inject IDishService DishService
 @inject IFoodLogService FoodLogService
 @inject NavigationManager NavigationManager
@@ -15,10 +14,10 @@ else
 	<PageTitle>Create a new Food Log</PageTitle>
 	<h3>Create a new Food Log</h3>
 }
-<EditForm Model="FoodLogDto" OnSubmit="HandleSubmit">
+<EditForm Model="FoodLogData" OnSubmit="HandleSubmit">
 	<div>
 		<label for="date">Date</label>
-		<InputDate id="date" @bind-Value="FoodLogDto.Date" class="form-control" />
+		<InputDate id="date" @bind-Value="FoodLogData.Date" class="form-control" />
 	</div>
 	<div>
 		<label for="dish">Dish</label>
@@ -40,7 +39,7 @@ else
 	[Parameter]
 	public int? Id { get; set; }
 
-	public FoodLogging FoodLogging { get; set; } = new AJSNutritions.Shared.Domain.FoodLogging { Date = DateTime.Now };
+	public AJSNutritions.Shared.Domain.FoodLog FoodLogData { get; set; } = new AJSNutritions.Shared.Domain.FoodLog { Date = DateTime.Now };
 	
 	string _confirmText = "Create New Food Log";
 	string? _userName;
@@ -83,7 +82,7 @@ else
 			}
 			else 			
 			{
-				FoodLogDto = result;
+				FoodLogData = result;
 				_confirmText = "Save";
 			}
 		}
@@ -93,12 +92,11 @@ else
 	{
 		if (Id.HasValue)
 		{	// Update the food log
-			await FoodLogService.UpdateFoodLog(Id.Value, FoodLogDto);
+			await FoodLogService.UpdateFoodLog(Id.Value, FoodLogData);
 		}
 		else
 		{  // Create the food log
-			FoodLogDto.UserName = _userName;
-			await FoodLogService.CreateFoodLog(FoodLogDto);
+			await FoodLogService.CreateFoodLog(FoodLogData);
 		}
 		// After creating a new food or editing an existing log, navigate to the food log list page
 		NavigationManager.NavigateTo("/");

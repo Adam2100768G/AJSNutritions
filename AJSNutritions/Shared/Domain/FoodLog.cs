@@ -2,7 +2,7 @@
 
 namespace AJSNutritions.Shared.Domain;
 
-public class FoodLogging : BaseDomainModel
+public class FoodLog : BaseDomainModel
 {
     public DateTime Date { get; set; } = new();
 

@@ -9,21 +9,21 @@ namespace AJSNutritions.Shared.Domain
 {
 	public class Staff : BaseDomainModel
 	{
-		public string name { get; set; }
+		public string Name { get; set; }
 
-		public string email { get; set; }
+		public string Email { get; set; }
 
-		public DateTime dateofbirth { get; set; }
+		public DateTime DateOfBirth { get; set; }
 
-		public string password { get; set; }
+		public string Password { get; set; }
 
-		public string gender { get; set; }
+		public string Gender { get; set; }
 
-		public string address { get; set; }
+		public string Address { get; set; }
 
-		public int phone { get; set; }
+		public int Phone { get; set; }
 
-		public string stafftype { get; set; }
+		public string StaffType { get; set; }
 
 	}
 }

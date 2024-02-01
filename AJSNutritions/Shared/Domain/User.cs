@@ -34,7 +34,7 @@ namespace AJSNutritions.Shared.Domain
 
 		public DateTime TargetDate { get; set; }
 
-		public int TargetWeight { get; set; }
+		public double TargetWeight { get; set; }
 
 		public double TargetBmi { get; set; }
 	}

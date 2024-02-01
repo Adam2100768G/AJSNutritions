@@ -1,6 +1,8 @@
 using AJSNutritions.Client;
 using AJSNutritions.Client.Services.DishService;
 using AJSNutritions.Client.Services.FoodLogService;
+using AJSNutritions.Client.Services.StaffService;
+using AJSNutritions.Client.Services.UserService;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
@@ -15,9 +17,9 @@ builder.Services.AddHttpClient("AJSNutritions.ServerAPI", client => client.BaseA
 // Supply HttpClient instances that include access tokens when making requests to the server project
 builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("AJSNutritions.ServerAPI"));
 builder.Services.AddScoped<IDishService, DishService>();
-builder.Services.AddScoped<IFoodLogService, FoodLogService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IStaffService, StaffService>();
+builder.Services.AddScoped<IFoodLogService, FoodLogService>();
 builder.Services.AddApiAuthorization();
 
 

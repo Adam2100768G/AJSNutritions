@@ -1,5 +1,7 @@
 ﻿using AJSNutritions.Server.Data;
+using AJSNutritions.Server.Models;
 using AJSNutritions.Shared.Domain;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace AJSNutritions.Server.Services.UserService;
@@ -7,10 +9,12 @@ namespace AJSNutritions.Server.Services.UserService;
 public class UserService : IUserService
 { 
 	private readonly ApplicationDbContext _context;
+	private readonly UserManager<ApplicationUser> _userManager;
 
-	public UserService(ApplicationDbContext context)
+	public UserService(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
 	{
 		_context = context;
+		_userManager = userManager;
 	}
 
 	public async Task<List<User>> GetUsers()
@@ -22,6 +26,36 @@ public class UserService : IUserService
 	{
 		var user = await _context.Users.FindAsync(id);
 		return user;
+	}
+
+	public async Task<User?> GetByUserName(string userName)
+	{	// Get the application user by username
+		var user = await _userManager.FindByNameAsync(userName);
+		if (user == null)
+		{
+			return null;
+		}
+		// Get the user ID from the user
+		var userId = user.UserId;
+
+		if (userId == null)
+		{	// no user ID found, so create a user and assign
+			User created = await CreateUser(new User
+			{
+				CreatedBy = "System",
+				DateCreated = DateTime.Now,
+			});
+			// assign the user ID to the application user
+			user.UserId = created.Id;
+			// update the application user
+			await _userManager.UpdateAsync(user);
+
+			return created;
+		}
+		else
+		{
+			return await _context.Users.FindAsync(userId);
+		}
 	}
 
 	public async Task<User> CreateUser(User user)

@@ -16,29 +16,30 @@ public class FoodLogController : ControllerBase
 	}
 
 	// This version gets all food logs for a user
-	[HttpGet("all/{id}")]
-	public async Task<List<FoodLogging>> GetFoodLogsForUser(string id)
+	[HttpGet("all/{userName}")]
+	public async Task<List<FoodLog>> GetFoodLogsForUser(string userName)
 	{
-		return await _foodLogService.GetFoodLogs(id);
+		return await _foodLogService.GetFoodLogs(userName);
 	}
+
 
 	// GET api/<FoodLogController>/5
 	[HttpGet("{id}")]
-	public async Task<FoodLogging?> GetFoodLogById(int id)
+	public async Task<FoodLog?> GetFoodLogById(int id)
 	{
 		return await _foodLogService.GetFoodLogById(id);
 	}
 
 	// POST api/<FoodLogController>
 	[HttpPost]
-	public async Task<FoodLogging?> Post([FromBody] FoodLogging value)
+	public async Task<FoodLog?> Post([FromBody] FoodLog value)
 	{
 		return await _foodLogService.CreateFoodLog(value);
 	}
 
 	// PUT api/<FoodLogController>/5
 	[HttpPut("{id}")]
-	public async Task Put(int id, [FromBody] FoodLogging value)
+	public async Task Put(int id, [FromBody] FoodLog value)
 	{
 		await _foodLogService.UpdateFoodLog(id, value);
 	}

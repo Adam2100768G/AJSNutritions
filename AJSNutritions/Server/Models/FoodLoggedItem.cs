@@ -1,4 +1,6 @@
-﻿namespace AJSNutritions.Server.Models;
+﻿using AJSNutritions.Shared.Domain;
+
+namespace AJSNutritions.Server.Models;
 
 public class FoodLoggedItem
 {

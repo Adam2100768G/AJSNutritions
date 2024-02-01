@@ -23,6 +23,13 @@ namespace AJSNutritions.Server.Controllers
 		}
 
 		// GET api/<UserController>/5
+		[HttpGet("name/{userName}")]
+		public async Task<User?> GetByUserName(string userName)
+		{
+			return await _userService.GetByUserName(userName);
+		}
+
+		// GET api/<UserController>/5
 		[HttpGet("{id}")]
 		public async Task<User?> Get(int id)
 		{

@@ -4,13 +4,13 @@ namespace AJSNutritions.Server.Services.FoodLogService;
 
 public interface IFoodLogService
 {
-	Task<List<FoodLogging>> GetFoodLogs(string userName);
+	Task<List<FoodLog>> GetFoodLogs(string userName);
 
-	Task<FoodLogging?> GetFoodLogById(int id);
+	Task<FoodLog?> GetFoodLogById(int id);
 
-	Task<FoodLogging> CreateFoodLog(FoodLogging foodLogging);
+	Task<FoodLog> CreateFoodLog(FoodLog foodLog);
 
-	Task<FoodLogging> UpdateFoodLog(int id, FoodLogging foodLogging);
+	Task<FoodLog> UpdateFoodLog(int id, FoodLog foodLog);
 
 	Task<bool> DeleteFoodLog(int id);
 }

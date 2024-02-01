@@ -1,14 +1,14 @@
 ﻿@page "/profile"
-@inject IProfileService ProfileService
+@inject IUserService UserService
 
-@using AJSNutritions.Client.Services.ProfileService
+@using AJSNutritions.Client.Services.UserService
 
-<PageTitle>Profile</PageTitle>
+<PageTitle>User</PageTitle>
 
 <div class="container rounded bg-white mt-5 mb-5">
 	<div class="row">
 		<div class="col-md-3 border-right">
-			<div class="d-flex flex-column align-items-center text-center p-3 py-5"><img class="rounded-circle mt-5" width="150px" src="https://st3.depositphotos.com/15648834/17930/v/600/depositphotos_179308454-stock-illustration-unknown-person-silhouette-glasses-profile.jpg"><span class="font-weight-bold">@ProfileData.FirstName, @ProfileData.LastName</span><span class="text-black-50">@UserName</span><span> </span></div>
+			<div class="d-flex flex-column align-items-center text-center p-3 py-5"><img class="rounded-circle mt-5" width="150px" src="https://st3.depositphotos.com/15648834/17930/v/600/depositphotos_179308454-stock-illustration-unknown-person-silhouette-glasses-profile.jpg"><span class="font-weight-bold">@UserData.FirstName, @UserData.LastName</span><span class="text-black-50">@UserName</span><span> </span></div>
 		</div>
 		<div class="col-md-5 border-right">
 			<div class="p-3 py-5">
@@ -16,38 +16,38 @@
 					<h4 class="text-right">Profile Settings</h4>
 				</div>
 				<div class="row mt-3">
-					<EditForm Model="ProfileData" OnSubmit="HandleSubmit">
+					<EditForm Model="UserData" OnSubmit="HandleSubmit">
 						<div class="col-md-15">
 							<label for="FirstName">First Name</label>
-							<InputText id="FirstName" @bind-Value="ProfileData.FirstName" class="form-control" />
+							<InputText id="FirstName" @bind-Value="UserData.FirstName" class="form-control" />
 						</div>
 						<div class="col-md-15">
 							<label for="LastName">Last Name</label>
-							<InputText id="LastName" @bind-Value="ProfileData.LastName" class="form-control" />
+							<InputText id="LastName" @bind-Value="UserData.LastName" class="form-control" />
 						</div>
 						<div class="col-md-15">
 							<label for="DateOfBirth">Date Of Birth</label>
-							<InputDate id="date" @bind-Value="ProfileData.DateOfBirth" class="form-control" />
+							<InputDate id="date" @bind-Value="UserData.DateOfBirth" class="form-control" />
 						</div>
 						<div class="col-md-15">
 							<label for="height">Height(cm)</label>
-							<InputNumber id="height" @bind-Value="ProfileData.Height" class="form-control"/>
+							<InputNumber id="height" @bind-Value="UserData.Height" class="form-control" />
 						</div>
 						<div class="col-md-15">
 							<label for="weight">Weight(kg)</label>
-							<InputNumber id="weight" @bind-Value="ProfileData.Weight" class="form-control"/>
+							<InputNumber id="weight" @bind-Value="UserData.Weight" class="form-control" />
 						</div>
 						<div class="col-md-15">
 							<label for="Bmi">BMI</label>
-							<div>@ProfileData.Bmi</div>
+							<div>@UserData.Bmi</div>
 						</div>
 						<div class="col-md-15">
 							<label for="address">Address</label>
-							<InputText id="address" @bind-Value="ProfileData.Address" class="form-control" />
+							<InputText id="address" @bind-Value="UserData.Address" class="form-control" />
 						</div>
 						<div>
 							<label for="genderType">Gender</label>
-							<select id="genderType" class="form-control" @bind="@ProfileData.Gender">
+							<select id="genderType" class="form-control" @bind="@UserData.Gender">
 								@foreach (var genderType in GenderTypes)
 								{
 									<option value="@genderType.Id">@genderType.Name</option>
@@ -60,27 +60,27 @@
 						</div>
 						<div class="col-md-15">
 							<label for="Allergies">Allergies</label>
-							<InputText id="Allergies" @bind-Value="ProfileData.Allergies" class="form-control" />
+							<InputText id="Allergies" @bind-Value="UserData.Allergies" class="form-control" />
 						</div>
 						<div class="col-md-15">
 							<label for="activityRate">Activity Rate</label>
-							<InputText id="activityRate" @bind-Value="ProfileData.ActivityRate" class="form-control" />
+							<InputText id="activityRate" @bind-Value="UserData.ActivityRate" class="form-control" />
 						</div>
 						<div class="col-md-15">
 							<label for="MedicalHistory">Medical History</label>
-							<InputText id="MedicalHistory" @bind-Value="ProfileData.MedicalHistory" class="form-control" />
+							<InputText id="MedicalHistory" @bind-Value="UserData.MedicalHistory" class="form-control" />
 						</div>
 						<div class="col-md-15">
 							<label for="TargetWeight">Target Weight</label>
-							<InputNumber id="TargetWeight" @bind-Value="ProfileData.TargetWeight" class="form-control" />
+							<InputNumber id="TargetWeight" @bind-Value="UserData.TargetWeight" class="form-control" />
 						</div>
 						<div class="col-md-15">
 							<label for="TargetBmi">Target BMI</label>
-							<InputNumber id="TargetBmi" @bind-Value="ProfileData.TargetBmi" class="form-control" />
+							<InputNumber id="TargetBmi" @bind-Value="UserData.TargetBmi" class="form-control" />
 						</div>
 						<div class="col-md-15">
 							<label for="TargetDate">Target Date</label>
-							<InputDate id="TargetDate" @bind-Value="ProfileData.TargetDate" class="form-control" />
+							<InputDate id="TargetDate" @bind-Value="UserData.TargetDate" class="form-control" />
 						</div>
 						<br />
 						<button class="btn btn-primary profile-button" type="submit">Save Profile</button>
@@ -96,7 +96,7 @@
 
 	public string? UserName { get; set; }
 	public string? Email { get; set; }
-	private AJSNutritions.Shared.Profile ProfileData = new AJSNutritions.Shared.Profile { };
+	private AJSNutritions.Shared.Domain.User UserData = new AJSNutritions.Shared.Domain.User { };
 
 	[CascadingParameter] private Task<AuthenticationState>? AuthenticationStateTask { get; set; }
 
@@ -111,11 +111,11 @@
 			{
 				UserName = user.Identity.Name;
 
-				AJSNutritions.Shared.Profile res = await ProfileService.GetByUserName(UserName);
+				AJSNutritions.Shared.Domain.User res = await UserService.GetByUserName(UserName);
 
 				if (res != null)
 				{
-					ProfileData = res;
+					UserData = res;
 				}
 			}
 		}
@@ -123,12 +123,12 @@
 
 	async Task HandleSubmit()
 	{
-		await ProfileService.Update(UserName, ProfileData);
-		AJSNutritions.Shared.Profile res = await ProfileService.GetByUserName(UserName);
+		await UserService.UpdateUser(UserData.Id, UserData);
+		AJSNutritions.Shared.Domain.User res = await UserService.GetByUserName(UserName);
 
 		if (res != null)
 		{
-			ProfileData = res;
+			UserData = res;
 		}
 	}
 

@@ -39,14 +39,14 @@ public class StaffService : IStaffService
 		{
 			return null;
 		}
-		toUpdate.name = staff.name;
-		toUpdate.email = staff.email;
-		toUpdate.dateofbirth = staff.dateofbirth;
-		toUpdate.password = staff.password;
-		toUpdate.gender = staff.gender;
-		toUpdate.address = staff.address;
-		toUpdate.phone = staff.phone;
-		toUpdate.stafftype = staff.stafftype;
+		toUpdate.Name = staff.Email;
+		toUpdate.Email = staff.Email;
+		toUpdate.DateOfBirth = staff.DateOfBirth;
+		toUpdate.Password = staff.Password;
+		toUpdate.Gender = staff.Gender;
+		toUpdate.Address = staff.Address;
+		toUpdate.Phone = staff.Phone;
+		toUpdate.StaffType = staff.StaffType;
 		toUpdate.UpdatedBy = staff.UpdatedBy;
 		toUpdate.DateUpdated = staff.DateUpdated;
 		toUpdate.DateCreated = staff.DateCreated;
@@ -59,8 +59,8 @@ public class StaffService : IStaffService
 
 	public async Task<bool> DeleteStaff(int id)
 	{
-		var dish = await _context.Staffs.FindAsync(id);
-		if (dish == null)
+		var staff = await _context.Staffs.FindAsync(id);
+		if (staff == null)
 		{
 			return false;
 		}

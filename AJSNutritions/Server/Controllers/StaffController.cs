@@ -15,7 +15,7 @@ namespace AJSNutritions.Server.Controllers
 			_staffService = staffService;
 		}
 
-		// GET: api/<UserController>
+		// GET: api/<StaffController>
 		[HttpGet]
 		public async Task<List<Staff>> GetStaffs()
 		{
