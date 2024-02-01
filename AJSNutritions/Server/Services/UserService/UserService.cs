@@ -43,7 +43,21 @@ public class UserService : IUserService
 			User created = await CreateUser(new User
 			{
 				CreatedBy = "System",
-				DateCreated = DateTime.Now,
+				DateCreated = DateTime.Now,	
+				UserName = "",
+				FirstName = "",
+				LastName = "",
+				Address = "",
+				Gender = 0,
+				Weight = 0,
+				Height = 0,
+				Allergies = "",
+				TargetWeight = 0,
+				TargetBmi = 0,
+				ActivityRate = "",
+				MedicalHistory = "",
+				Bmi = 0,
+				
 			});
 			// assign the user ID to the application user
 			user.UserId = created.Id;
@@ -60,9 +74,17 @@ public class UserService : IUserService
 
 	public async Task<User> CreateUser(User user)
 	{
-		_context.Users.Add(user);
-		await _context.SaveChangesAsync();
-		return user;
+		try
+		{
+			_context.Users.Add(user);
+			await _context.SaveChangesAsync();
+			return user;
+		}
+		catch (Exception e)
+		{
+			Console.WriteLine(e);
+			throw;
+		}
 	}
 
 	public async Task<User> UpdateUser(int id, User user)

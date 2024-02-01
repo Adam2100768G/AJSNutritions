@@ -1,7 +1,9 @@
 ﻿@page "/foodlog"
 @page "/foodlog/{id:int}"
+@using AJSNutritions.Client.Services.UserService
 @inject IDishService DishService
 @inject IFoodLogService FoodLogService
+@inject IUserService UserService
 @inject NavigationManager NavigationManager
 
 @if(Id.HasValue)
@@ -42,7 +44,7 @@ else
 	public AJSNutritions.Shared.Domain.FoodLog FoodLogData { get; set; } = new AJSNutritions.Shared.Domain.FoodLog { Date = DateTime.Now };
 	
 	string _confirmText = "Create New Food Log";
-	string? _userName;
+	int? _userId;
 
 	[CascadingParameter] private Task<AuthenticationState>? AuthenticationStateTask { get; set; }
 
@@ -90,6 +92,12 @@ else
 
 	async Task HandleSubmit()
 	{
+		// assign the user id to the food log
+		if (_userId != null)
+		{
+			FoodLogData.UserId = _userId.Value;
+		}
+
 		if (Id.HasValue)
 		{	// Update the food log
 			await FoodLogService.UpdateFoodLog(Id.Value, FoodLogData);
@@ -114,7 +122,12 @@ else
 
 		if (user.Identity is not null && user.Identity.IsAuthenticated)
 		{
-			_userName = user.Identity.Name;
+			User userData = await UserService.GetByUserName(user.Identity.Name);
+
+			if (userData != null)
+			{
+				_userId = userData.Id;
+			}
 		}
 	}
 }

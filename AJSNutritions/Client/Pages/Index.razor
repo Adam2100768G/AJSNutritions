@@ -7,14 +7,8 @@
 
 Welcome to AJS Nutritions.
 
-<AuthorizeView Roles=@($"{Constants.Roles.User}")>
+<AuthorizeView>
 	<Authorized>
 		<FoodLogs />
 	</Authorized>
-</AuthorizeView>
-
-<AuthorizeView Roles=@($"{Constants.Roles.Admin}, {Constants.Roles.Staff}")>
-<Authorized>
-	<h3>This is admin content</h3>
-</Authorized>
 </AuthorizeView>

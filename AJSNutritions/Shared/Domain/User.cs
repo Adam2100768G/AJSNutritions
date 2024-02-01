@@ -18,13 +18,13 @@ namespace AJSNutritions.Shared.Domain
 
 		public string Address { get; set; }
 
-		public int Gender { get; set; }
+		public int? Gender { get; set; }
 
-		public double Weight { get; set; }
+		public double? Weight { get; set; }
 
-		public int Height { get; set; }
+		public int? Height { get; set; }
 
-		public double Bmi { get; set; }
+		public double? Bmi { get; set; }
 
 		public string Allergies { get; set; }
 
@@ -32,10 +32,10 @@ namespace AJSNutritions.Shared.Domain
 
 		public string MedicalHistory { get; set; }
 
-		public DateTime TargetDate { get; set; }
+		public DateTime? TargetDate { get; set; }
 
-		public double TargetWeight { get; set; }
+		public double? TargetWeight { get; set; }
 
-		public double TargetBmi { get; set; }
+		public double? TargetBmi { get; set; }
 	}
 }

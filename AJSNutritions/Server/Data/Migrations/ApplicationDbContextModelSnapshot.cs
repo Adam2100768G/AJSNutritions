@@ -256,7 +256,7 @@ namespace AJSNutritions.Server.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<double>("Bmi")
+                    b.Property<double?>("Bmi")
                         .HasColumnType("float");
 
                     b.Property<string>("CreatedBy")
@@ -275,10 +275,10 @@ namespace AJSNutritions.Server.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Gender")
+                    b.Property<int?>("Gender")
                         .HasColumnType("int");
 
-                    b.Property<int>("Height")
+                    b.Property<int?>("Height")
                         .HasColumnType("int");
 
                     b.Property<string>("LastName")
@@ -289,13 +289,13 @@ namespace AJSNutritions.Server.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<double>("TargetBmi")
+                    b.Property<double?>("TargetBmi")
                         .HasColumnType("float");
 
-                    b.Property<DateTime>("TargetDate")
+                    b.Property<DateTime?>("TargetDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<double>("TargetWeight")
+                    b.Property<double?>("TargetWeight")
                         .HasColumnType("float");
 
                     b.Property<string>("UpdatedBy")
@@ -305,7 +305,7 @@ namespace AJSNutritions.Server.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<double>("Weight")
+                    b.Property<double?>("Weight")
                         .HasColumnType("float");
 
                     b.HasKey("Id");
