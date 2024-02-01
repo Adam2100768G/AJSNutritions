@@ -1,5 +1,5 @@
 ﻿using System.Net.Http.Json;
-using AJSNutritions.Shared;
+using AJSNutritions.Shared.Domain;
 using Microsoft.AspNetCore.Components;
 
 namespace AJSNutritions.Client.Services.DishService;

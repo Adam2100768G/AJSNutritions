@@ -1,11 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace AJSNutritions.Shared;
+namespace AJSNutritions.Shared.Domain;
 
-public class Dish
+public class Dish : BaseDomainModel
 {
-    [Key]
-    public int Id { get; set; }
     public required string Name { get; set; }
     public string Description { get; set; } = string.Empty;
 

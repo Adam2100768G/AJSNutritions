@@ -1,6 +1,6 @@
 ﻿using AJSNutritions.Server.Data;
 using AJSNutritions.Server.Models;
-using AJSNutritions.Shared;
+using AJSNutritions.Shared.Domain;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -17,7 +17,7 @@ public class FoodLogService : IFoodLogService
 		_userManager = userManager;
 	}
 
-	public async Task<List<FoodLogDto>> GetFoodLogs(string userName)
+	public async Task<List<FoodLogging>> GetFoodLogs(string userName)
 	{
 		// get the userId for the given userName
 		ApplicationUser? user = await GetUserByName(userName);
@@ -29,15 +29,14 @@ public class FoodLogService : IFoodLogService
 
 		return await _context.FoodLogs
 			.Where(fl => fl.ApplicationUserId == user.Id) // Get all the food logs for the user
-			.Select(fl => new FoodLogDto					// create a DTO to return
+			.Select(fl => new FoodLogging					// create a DTO to return
 			{
 				Id = fl.Id,
 				Date = fl.Date,
-				UserName = userName,
 			}).ToListAsync();
 	}
 
-	public async Task<FoodLogDto?> GetFoodLogById(int id)
+	public async Task<FoodLogging?> GetFoodLogById(int id)
 	{
 		var foodLog = await _context.FoodLogs.FindAsync(id);
 
@@ -52,18 +51,17 @@ public class FoodLogService : IFoodLogService
 			return null;
 		}
 
-		return new FoodLogDto
+		return new FoodLogging
 		{
 			Id = foodLog.Id,
 			Date = foodLog.Date,
-			UserName = user.UserName,
 		};
 	}
 
-	public async Task<FoodLogDto> CreateFoodLog(FoodLogDto foodLogDto)
+	public async Task<FoodLogging> CreateFoodLog(FoodLogging foodLogDto)
 	{
 		// get the user
-		ApplicationUser user = await GetUserByName(foodLogDto.UserName);
+		ApplicationUser user = await GetUserByName(foodLogging.);
 
 		if (user == null)
 		{
@@ -84,7 +82,7 @@ public class FoodLogService : IFoodLogService
 		return foodLogDto;
 	}
 
-	public async Task<FoodLogDto> UpdateFoodLog(int id, FoodLogDto foodLogDto)
+	public async Task<FoodLogging> UpdateFoodLog(int id, FoodLogging foodLogDto)
 	{
 		return null;
 	}

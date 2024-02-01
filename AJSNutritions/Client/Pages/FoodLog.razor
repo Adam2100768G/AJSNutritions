@@ -1,5 +1,6 @@
 ﻿@page "/foodlog"
 @page "/foodlog/{id:int}"
+@using AJSNutritions.Shared.Domain
 @inject IDishService DishService
 @inject IFoodLogService FoodLogService
 @inject NavigationManager NavigationManager
@@ -39,7 +40,7 @@ else
 	[Parameter]
 	public int? Id { get; set; }
 
-	public FoodLogDto FoodLogDto { get; set; } = new AJSNutritions.Shared.FoodLogDto { Date = DateTime.Now };
+	public FoodLogging FoodLogging { get; set; } = new AJSNutritions.Shared.Domain.FoodLogging { Date = DateTime.Now };
 	
 	string _confirmText = "Create New Food Log";
 	string? _userName;

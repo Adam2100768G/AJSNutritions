@@ -1,7 +1,6 @@
 using AJSNutritions.Client;
 using AJSNutritions.Client.Services.DishService;
 using AJSNutritions.Client.Services.FoodLogService;
-using AJSNutritions.Client.Services.ProfileService;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
@@ -17,7 +16,8 @@ builder.Services.AddHttpClient("AJSNutritions.ServerAPI", client => client.BaseA
 builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("AJSNutritions.ServerAPI"));
 builder.Services.AddScoped<IDishService, DishService>();
 builder.Services.AddScoped<IFoodLogService, FoodLogService>();
-builder.Services.AddScoped<IProfileService, ProfileService>();
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IStaffService, StaffService>();
 builder.Services.AddApiAuthorization();
 
 

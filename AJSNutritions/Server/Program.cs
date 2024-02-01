@@ -8,7 +8,8 @@ using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
 using System.IdentityModel.Tokens.Jwt;
 using AJSNutritions.Server.Services.FoodLogService;
-using AJSNutritions.Server.Services.ProfileService;
+using AJSNutritions.Server.Services.UserService;
+using AJSNutritions.Server.Services.StaffService;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -40,7 +41,8 @@ builder.Services.AddRazorPages();
 
 builder.Services.AddScoped<IDishService, DishService>();
 builder.Services.AddScoped<IFoodLogService, FoodLogService>();
-builder.Services.AddScoped<IProfileService, ProfileService>();
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IStaffService, StaffService>();
 
 var app = builder.Build();
 

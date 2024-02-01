@@ -1,5 +1,5 @@
 ﻿using AJSNutritions.Server.Data;
-using AJSNutritions.Shared;
+using AJSNutritions.Shared.Domain;
 using Microsoft.EntityFrameworkCore;
 
 namespace AJSNutritions.Server.Services.DishService;

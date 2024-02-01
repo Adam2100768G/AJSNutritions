@@ -1,5 +1,5 @@
 ﻿using AJSNutritions.Server.Models;
-using AJSNutritions.Shared;
+using AJSNutritions.Shared.Domain;
 using Duende.IdentityServer.EntityFramework.Options;
 using Microsoft.AspNetCore.ApiAuthorization.IdentityServer;
 using Microsoft.EntityFrameworkCore;
@@ -20,7 +20,10 @@ namespace AJSNutritions.Server.Data
         public DbSet<FoodLog> FoodLogs { get; set; } = null!;
         // add a table for the food logged item in the database
         public DbSet<FoodLoggedItem> FoodLoggedItems { get; set; } = null!;
-
+        // add a table for the User in the database
+        public DbSet<User> Users { get; set; } = null!;
+        // add a table for the staff in the database
+        public DbSet<Staff> Staffs {  get; set; } = null!;
 
     }
 }

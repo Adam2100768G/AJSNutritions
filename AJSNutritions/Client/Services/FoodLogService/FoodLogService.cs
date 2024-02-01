@@ -1,5 +1,5 @@
 ﻿using System.Net.Http.Json;
-using AJSNutritions.Shared;
+using AJSNutritions.Shared.Domain;
 using Microsoft.AspNetCore.Components;
 
 namespace AJSNutritions.Client.Services.FoodLogService;
@@ -13,7 +13,7 @@ public class FoodLogService : IFoodLogService
 		_httpClient = httpClient;
 	}
 
-	public List<FoodLogDto> FoodLogs { get; set; } = new();
+	public List<FoodLogging> FoodLogs { get; set; } = new();
 
 
 	public async Task GetFoodLogs(string userId)
@@ -21,21 +21,21 @@ public class FoodLogService : IFoodLogService
 		var result = await _httpClient.GetAsync($"api/foodlog/all/{userId}");
 		if (result.IsSuccessStatusCode)
 		{
-			FoodLogs = await result.Content.ReadFromJsonAsync<List<FoodLogDto>>();
+			FoodLogs = await result.Content.ReadFromJsonAsync<List<FoodLogging>>();
 		}
 	}
 
-	public async Task<FoodLogDto?> GetFoodLogById(int id)
+	public async Task<FoodLogging?> GetFoodLogById(int id)
 	{
-		return await _httpClient.GetFromJsonAsync<FoodLogDto>($"api/foodlog/{id}");
+		return await _httpClient.GetFromJsonAsync<FoodLogging>($"api/foodlog/{id}");
 	}
 
-	public async Task<FoodLogDto?> CreateFoodLog(FoodLogDto foodLogDto)
+	public async Task<FoodLogging?> CreateFoodLog(FoodLogging foodLogDto)
 	{
 		var response = await _httpClient.PostAsJsonAsync("api/foodlog", foodLogDto);
 		if (response.IsSuccessStatusCode)
 		{
-			var res = await response.Content.ReadFromJsonAsync<FoodLogDto>();
+			var res = await response.Content.ReadFromJsonAsync<FoodLogging>();
 
 			FoodLogs.Add(res);
 
@@ -47,7 +47,7 @@ public class FoodLogService : IFoodLogService
 		}
 	}
 
-	public async Task UpdateFoodLog(int id, FoodLogDto foodLogDto)
+	public async Task UpdateFoodLog(int id, FoodLogging foodLogDto)
 	{
 		var response = await _httpClient.PutAsJsonAsync($"api/foodlog/{id}", foodLogDto);
 		if (response.IsSuccessStatusCode)

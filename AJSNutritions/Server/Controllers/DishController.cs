@@ -1,5 +1,5 @@
 ﻿using AJSNutritions.Server.Services.DishService;
-using AJSNutritions.Shared;
+using AJSNutritions.Shared.Domain;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AJSNutritions.Server.Controllers
