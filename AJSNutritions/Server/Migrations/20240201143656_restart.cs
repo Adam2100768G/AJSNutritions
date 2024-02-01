@@ -1,10 +1,14 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
-using System;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace AJSNutritions.Server.Data.Migrations
+#nullable disable
+
+namespace AJSNutritions.Server.Migrations
 {
-    public partial class CreateIdentitySchema : Migration
+    /// <inheritdoc />
+    public partial class restart : Migration
     {
+        /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
@@ -26,6 +30,8 @@ namespace AJSNutritions.Server.Data.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    UserId = table.Column<int>(type: "int", nullable: true),
+                    StaffId = table.Column<int>(type: "int", nullable: true),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -58,11 +64,48 @@ namespace AJSNutritions.Server.Data.Migrations
                     Description = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
                     CreationTime = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Expiration = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Data = table.Column<string>(type: "nvarchar(max)", maxLength: 50910, nullable: false)
+                    Data = table.Column<string>(type: "nvarchar(max)", maxLength: 50000, nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_DeviceCodes", x => x.UserCode);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Dishes",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Calories = table.Column<int>(type: "int", nullable: false),
+                    DateCreated = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    DateUpdated = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    UpdatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Dishes", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "FoodLogs",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Date = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    DateCreated = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    DateUpdated = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    UpdatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_FoodLogs", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -72,11 +115,11 @@ namespace AJSNutritions.Server.Data.Migrations
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Version = table.Column<int>(type: "int", nullable: false),
                     Created = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Use = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: true),
+                    Use = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     Algorithm = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     IsX509Certificate = table.Column<bool>(type: "bit", nullable: false),
                     DataProtected = table.Column<bool>(type: "bit", nullable: false),
-                    Data = table.Column<string>(type: "nvarchar(max)", maxLength: 50910, nullable: false)
+                    Data = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -96,11 +139,66 @@ namespace AJSNutritions.Server.Data.Migrations
                     CreationTime = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Expiration = table.Column<DateTime>(type: "datetime2", nullable: true),
                     ConsumedTime = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    Data = table.Column<string>(type: "nvarchar(max)", maxLength: 50910, nullable: false)
+                    Data = table.Column<string>(type: "nvarchar(max)", maxLength: 50000, nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_PersistedGrants", x => x.Key);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Staffs",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    DateOfBirth = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Password = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Gender = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Address = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Phone = table.Column<int>(type: "int", nullable: false),
+                    StaffType = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    DateCreated = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    DateUpdated = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    UpdatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Staffs", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Users",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    FirstName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    LastName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    DateOfBirth = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Address = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Gender = table.Column<int>(type: "int", nullable: true),
+                    Weight = table.Column<double>(type: "float", nullable: true),
+                    Height = table.Column<int>(type: "int", nullable: true),
+                    Bmi = table.Column<double>(type: "float", nullable: true),
+                    Allergies = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ActivityRate = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    MedicalHistory = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    TargetDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    TargetWeight = table.Column<double>(type: "float", nullable: true),
+                    TargetBmi = table.Column<double>(type: "float", nullable: true),
+                    DateCreated = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    DateUpdated = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    UpdatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Users", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -209,6 +307,26 @@ namespace AJSNutritions.Server.Data.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "FoodLoggedItems",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    DishQuantity = table.Column<int>(type: "int", nullable: false),
+                    FoodLogId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_FoodLoggedItems", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_FoodLoggedItems_FoodLogs_FoodLogId",
+                        column: x => x.FoodLogId,
+                        principalTable: "FoodLogs",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
@@ -260,6 +378,11 @@ namespace AJSNutritions.Server.Data.Migrations
                 column: "Expiration");
 
             migrationBuilder.CreateIndex(
+                name: "IX_FoodLoggedItems_FoodLogId",
+                table: "FoodLoggedItems",
+                column: "FoodLogId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Keys_Use",
                 table: "Keys",
                 column: "Use");
@@ -285,6 +408,7 @@ namespace AJSNutritions.Server.Data.Migrations
                 columns: new[] { "SubjectId", "SessionId", "Type" });
         }
 
+        /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
@@ -306,16 +430,31 @@ namespace AJSNutritions.Server.Data.Migrations
                 name: "DeviceCodes");
 
             migrationBuilder.DropTable(
+                name: "Dishes");
+
+            migrationBuilder.DropTable(
+                name: "FoodLoggedItems");
+
+            migrationBuilder.DropTable(
                 name: "Keys");
 
             migrationBuilder.DropTable(
                 name: "PersistedGrants");
 
             migrationBuilder.DropTable(
+                name: "Staffs");
+
+            migrationBuilder.DropTable(
+                name: "Users");
+
+            migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "FoodLogs");
         }
     }
 }
