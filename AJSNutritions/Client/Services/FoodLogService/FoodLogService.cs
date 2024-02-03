@@ -14,16 +14,17 @@ public class FoodLogService : IFoodLogService
 		_client = client;
 	}
 
-	public List<FoodLog> FoodLogs { get; set; } = new();
-
-
-	public async Task GetFoodLogs(string userName)
+	public async Task<List<FoodLog>> GetFoodLogs(int userId)
 	{
-		var result = await _client.GetFromJsonAsync<List<FoodLog>>($"api/foodlog/all/{userName}");
-		if (result is not null)
+		var response = await _client.GetAsync($"api/foodlog/all/{userId}");
+
+		if (!response.IsSuccessStatusCode)
 		{
-			FoodLogs = result;
+			return new List<FoodLog>();
 		}
+		var data = await response.Content.ReadFromJsonAsync<List<FoodLog>>();
+
+		return data ?? new List<FoodLog>();
 	}
 
 	public async Task<FoodLog?> GetFoodLogById(int id)
@@ -36,35 +37,25 @@ public class FoodLogService : IFoodLogService
 		var response = await _client.PostAsJsonAsync("api/foodlog", foodLog);
 		if (response.IsSuccessStatusCode)
 		{
-			var res = await response.Content.ReadFromJsonAsync<FoodLog>();
-
-			FoodLogs.Add(res);
-
-			return res;
+			return await response.Content.ReadFromJsonAsync<FoodLog>();
 		}
 
 		return null;
 	}
 
-	public async Task UpdateFoodLog(int id, FoodLog foodLog)
+	public async Task<FoodLog?> UpdateFoodLog(int id, FoodLog foodLog)
 	{
 		var response = await _client.PutAsJsonAsync($"api/foodlog/{id}", foodLog);
 		if (response.IsSuccessStatusCode)
 		{
-			var index = FoodLogs.FindIndex(f => f.Id == id);
-			if (index != -1)
-			{
-				FoodLogs[index] = foodLog;
-			}
+			return await response.Content.ReadFromJsonAsync<FoodLog>();
 		}
+
+		return null;
 	}
 
 	public async Task DeleteFoodLog(int id)
 	{
-		var response = await _client.DeleteAsync($"api/foodlog/{id}");
-		if (response.IsSuccessStatusCode)
-		{
-			FoodLogs.Remove(FoodLogs.Find(f => f.Id == id));
-		}
+		await _client.DeleteAsync($"api/foodlog/{id}");
 	}
 }

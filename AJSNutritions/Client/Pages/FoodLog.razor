@@ -122,12 +122,12 @@ else
 
 		if (user.Identity is not null && user.Identity.IsAuthenticated)
 		{
-			User userData = await UserService.GetByUserName(user.Identity.Name);
-
-			if (userData != null)
-			{
-				_userId = userData.Id;
-			}
+			// User userData = await UserService.GetByUserName(user.Identity.Name);
+			//
+			// if (userData != null)
+			// {
+			// 	_userId = userData.Id;
+			// }
 		}
 	}
 }

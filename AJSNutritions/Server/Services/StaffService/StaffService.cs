@@ -7,8 +7,7 @@ namespace AJSNutritions.Server.Services.StaffService;
 public class StaffService : IStaffService
 {
 	private readonly ApplicationDbContext _context;
-	private Staff? staff;
-
+	
 	public StaffService(ApplicationDbContext context)
 	{
 		_context = context;
@@ -21,8 +20,7 @@ public class StaffService : IStaffService
 
 	public async Task<Staff?> GetStaffById(int id)
 	{
-		var user = await _context.Staffs.FindAsync(id);
-		return staff;
+		return await _context.Staffs.FindAsync(id);
 	}
 
 	public async Task<Staff> CreateStaff(Staff staff)
@@ -39,7 +37,7 @@ public class StaffService : IStaffService
 		{
 			return null;
 		}
-		toUpdate.Name = staff.Email;
+		toUpdate.Name = staff.Name;
 		toUpdate.Email = staff.Email;
 		toUpdate.DateOfBirth = staff.DateOfBirth;
 		toUpdate.Password = staff.Password;

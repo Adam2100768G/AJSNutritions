@@ -3,7 +3,6 @@ using AJSNutritions.Server.Models;
 using AJSNutritions.Shared.Domain;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using AJSNutritions.Shared.Domain;
 
 namespace AJSNutritions.Server.Services.FoodLogService;
 
@@ -18,21 +17,8 @@ public class FoodLogService : IFoodLogService
 		_userManager = userManager;
 	}
 
-	public async Task<List<FoodLog>> GetFoodLogs(string userName)
+	public async Task<List<FoodLog>> GetFoodLogs(int userId)
 	{
-		var user = await _userManager.FindByNameAsync(userName);
-		if (user == null)
-		{
-			return null;
-		}
-		// Get the user ID from the user
-		var userId = user.UserId;
-
-		if (userId == null)
-		{
-			return new List<FoodLog>();
-		}
-
 		return await _context.FoodLogs
 			.Where(fl => fl.UserId == userId)		// Get all the food logs for the user
 			.Select(fl => new FoodLog					// create a DTO to return

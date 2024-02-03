@@ -1,0 +1,21 @@
+﻿@page "/test"
+@page "/test/{userId:int}"
+@page "/test/{userId:int}/{logId:int}"
+
+<h3>Test</h3>
+
+<h4>UserID = @UserId</h4>
+<h4>LogID = @LogId</h4>
+
+@code {
+
+	[Parameter] public int? LogId { get; set; }
+	[Parameter] public int? UserId { get; set; }
+
+	protected override async Task OnParametersSetAsync()
+	{
+
+
+	}
+}
+

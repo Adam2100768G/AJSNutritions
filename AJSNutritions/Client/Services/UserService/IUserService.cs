@@ -8,13 +8,11 @@ namespace AJSNutritions.Client.Services.UserService
 
 		Task GetUsers();
 
-		Task<User?> GetByUserName(string userName);
-
 		Task<User?> GetUserById(int id);
 
 		Task<User?> CreateUser(User user);
 
-		Task UpdateUser(int id, User user);
+		Task<User?> UpdateUser(int id, User user);
 
 		Task DeleteUser(int id);
 	}
