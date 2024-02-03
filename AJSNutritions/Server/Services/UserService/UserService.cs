@@ -1,7 +1,5 @@
 ﻿using AJSNutritions.Server.Data;
-using AJSNutritions.Server.Models;
 using AJSNutritions.Shared.Domain;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace AJSNutritions.Server.Services.UserService;
@@ -9,12 +7,10 @@ namespace AJSNutritions.Server.Services.UserService;
 public class UserService : IUserService
 { 
 	private readonly ApplicationDbContext _context;
-	private readonly UserManager<ApplicationUser> _userManager;
-
-	public UserService(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
+	
+	public UserService(ApplicationDbContext context)
 	{
 		_context = context;
-		_userManager = userManager;
 	}
 
 	public async Task<List<User>> GetUsers()
@@ -24,58 +20,14 @@ public class UserService : IUserService
 
 	public async Task<User?> GetUserById(int id)
 	{
-		var user = await _context.Users.FindAsync(id);
-		return user;
-	}
-
-	public async Task<User?> GetByUserName(string userName)
-	{	// Get the application user by username
-		var user = await _userManager.FindByNameAsync(userName);
-		if (user == null)
-		{
-			return null;
-		}
-		// Get the user ID from the user
-		var userId = user.UserId;
-
-		if (userId == null)
-		{	// no user ID found, so create a user and assign
-			User created = await CreateUser(new User
-			{
-				CreatedBy = "System",
-				DateCreated = DateTime.Now,	
-				UserName = "",
-				FirstName = "",
-				LastName = "",
-				Address = "",
-				Gender = 0,
-				Weight = 0,
-				Height = 0,
-				Allergies = "",
-				TargetWeight = 0,
-				TargetBmi = 0,
-				ActivityRate = "",
-				MedicalHistory = "",
-				Bmi = 0,
-				
-			});
-			// assign the user ID to the application user
-			user.UserId = created.Id;
-			// update the application user
-			await _userManager.UpdateAsync(user);
-
-			return created;
-		}
-		else
-		{
-			return await _context.Users.FindAsync(userId);
-		}
+		return await _context.Users.FindAsync(id);
 	}
 
 	public async Task<User> CreateUser(User user)
 	{
 		try
 		{
+			user.Bmi = CalculateBmi(user);
 			_context.Users.Add(user);
 			await _context.SaveChangesAsync();
 			return user;
@@ -97,10 +49,9 @@ public class UserService : IUserService
 		toUpdate.FirstName = user.FirstName;
 		toUpdate.LastName = user.LastName;
 		toUpdate.DateOfBirth = user.DateOfBirth;
-		toUpdate.UserName = user.UserName;
 		toUpdate.Address = user.Address;
 		toUpdate.Weight = user.Weight;
-		toUpdate.Bmi = user.Bmi;
+		toUpdate.Bmi = CalculateBmi(user);
 		toUpdate.Height = user.Height;
 		toUpdate.Gender = user.Gender;
 		toUpdate.ActivityRate = user.ActivityRate;
@@ -130,5 +81,18 @@ public class UserService : IUserService
 		await _context.SaveChangesAsync();
 
 		return true;
+	}
+
+	private double CalculateBmi(User user)
+	{
+		double heightCm = user.Height ?? 0;
+		double weight = user.Weight ?? 0;
+
+		if (heightCm <= 0 || weight <= 0)
+		{
+			return 0;
+		}
+
+		return weight / Math.Pow(heightCm / 100.0, 2);
 	}
 }

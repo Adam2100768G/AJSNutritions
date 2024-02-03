@@ -1,69 +1,92 @@
 ﻿using System.Net.Http.Json;
-using AJSNutritions.Shared.Domain;
 
 namespace AJSNutritions.Client.Services.UserService;
 
 public class UserService : IUserService
 {
 	private readonly HttpClient _client;
-
+	
 	public UserService(HttpClient client)
 	{
 		_client = client;
 	}
 
-	public List<User> Users { get; set; } = new();
+	public List<AJSNutritions.Shared.Domain.User> Users { get; set; } = new();
 
 
 	public async Task GetUsers()
 	{
-		var result = await _client.GetFromJsonAsync<List<User>>($"api/user");
+		var result = await _client.GetFromJsonAsync<List<AJSNutritions.Shared.Domain.User>>($"api/user");
 		if (result is not null)
 		{
 			Users = result;
 		}
 	}
 
-	public async Task<User?> GetByUserName(string userName)
+	public async Task<AJSNutritions.Shared.Domain.User?> GetUserById(int id)
 	{
-		var result = await _client.GetAsync($"api/user/name/{userName}");
-		if (result.IsSuccessStatusCode)
+		var response = await _client.GetAsync($"api/user/{id}");
+		if (!response.IsSuccessStatusCode)
 		{
-			return await result.Content.ReadFromJsonAsync<User>();
+			return null;
 		}
 
-		return null;
-	}
-
-	public async Task<User?> GetUserById(int id)
-	{
-		var result = await _client.GetAsync($"api/user/{id}");
-		if (result.IsSuccessStatusCode)
+		try
 		{
-			return await result.Content.ReadFromJsonAsync<User>();
+			// Check if response has content
+			return await response.Content.ReadFromJsonAsync<AJSNutritions.Shared.Domain.User>();
 		}
-
-		return null;
+		catch (Exception e)
+		{
+			return null;
+		}
+		
 	}
 
-	public async Task<User?> CreateUser(User user)
+	public async Task<AJSNutritions.Shared.Domain.User?> CreateUser(AJSNutritions.Shared.Domain.User user)
 	{
 		var response = await _client.PostAsJsonAsync("api/user", user);
-		if (response.IsSuccessStatusCode)
+		if (!response.IsSuccessStatusCode)
 		{
-			var res = await response.Content.ReadFromJsonAsync<User>();
+			return null;
+		}
+		var created = await response.Content.ReadFromJsonAsync<AJSNutritions.Shared.Domain.User>();
 
-			Users.Add(res);
-
-			return res;
+		if (created is null)
+		{
+			return null;
 		}
 
-		return null;
+		Users.Add(created);
+		return created;
 	}
 
-	public async Task UpdateUser(int id, User user)
+	public async Task<AJSNutritions.Shared.Domain.User?> UpdateUser(int id, AJSNutritions.Shared.Domain.User user)
 	{
-		await _client.PutAsJsonAsync($"api/user/{id}", user);
+		
+		var response = await _client.PutAsJsonAsync($"api/user/{id}", user);
+		if (!response.IsSuccessStatusCode)
+		{
+			return null;
+		}
+		var updated = await response.Content.ReadFromJsonAsync<AJSNutritions.Shared.Domain.User>();
+		if (updated is null)
+		{
+			return null;
+		}
+
+		var index = Users.FindIndex(u => u.Id == id);
+		if (index != -1)
+		{
+			Users[index] = updated;
+		}
+		else
+		{
+			Users.Add(updated);
+		}
+
+		return updated;
+
 	}
 
 	public async Task DeleteUser(int id)

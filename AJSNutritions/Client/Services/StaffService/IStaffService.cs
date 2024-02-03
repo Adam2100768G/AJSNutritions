@@ -12,7 +12,7 @@ namespace AJSNutritions.Client.Services.StaffService
 
 		Task<Staff?> CreateStaff(Staff staff);
 
-		Task UpdateStaff(int id, Staff staff);
+		Task<Staff?> UpdateStaff(int id, Staff staff);
 
 		Task DeleteStaff(int id);
 	}

@@ -16,10 +16,10 @@ public class FoodLogController : ControllerBase
 	}
 
 	// This version gets all food logs for a user
-	[HttpGet("all/{userName}")]
-	public async Task<List<FoodLog>> GetFoodLogsForUser(string userName)
+	[HttpGet("all/{userId}")]
+	public async Task<List<FoodLog>> GetFoodLogsForUser(int userId)
 	{
-		return await _foodLogService.GetFoodLogs(userName);
+		return await _foodLogService.GetFoodLogs(userId);
 	}
 
 

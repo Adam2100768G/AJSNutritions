@@ -31,16 +31,16 @@ namespace AJSNutritions.Server.Controllers
 
 		// POST api/<StaffController>
 		[HttpPost]
-		public async Task Post([FromBody] Staff value)
+		public async Task<Staff?> Post([FromBody] Staff value)
 		{
-			await _staffService.CreateStaff(value);
+			return await _staffService.CreateStaff(value);
 		}
 
 		// PUT api/<StaffController>/5
 		[HttpPut("{id}")]
-		public async Task Put(int id, [FromBody] Staff value)
+		public async Task<Staff?> Put(int id, [FromBody] Staff value)
 		{
-			await _staffService.UpdateStaff(id, value);
+			return await _staffService.UpdateStaff(id, value);
 		}
 
 		// DELETE api/<StaffController>/5

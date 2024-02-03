@@ -23,13 +23,6 @@ namespace AJSNutritions.Server.Controllers
 		}
 
 		// GET api/<UserController>/5
-		[HttpGet("name/{userName}")]
-		public async Task<User?> GetByUserName(string userName)
-		{
-			return await _userService.GetByUserName(userName);
-		}
-
-		// GET api/<UserController>/5
 		[HttpGet("{id}")]
 		public async Task<User?> Get(int id)
 		{
@@ -38,16 +31,16 @@ namespace AJSNutritions.Server.Controllers
 
 		// POST api/<UserController>
 		[HttpPost]
-		public async Task Post([FromBody] User value)
+		public async Task<User?> Post([FromBody] User value)
 		{
-			await _userService.CreateUser(value);
+			return await _userService.CreateUser(value);
 		}
 
 		// PUT api/<UserController>/5
 		[HttpPut("{id}")]
-		public async Task Put(int id, [FromBody] User value)
+		public async Task<User?> Put(int id, [FromBody] User value)
 		{
-			await _userService.UpdateUser(id, value);
+			return await _userService.UpdateUser(id, value);
 		}
 
 		// DELETE api/<UserController>/5

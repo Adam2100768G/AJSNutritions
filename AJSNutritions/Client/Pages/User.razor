@@ -1,0 +1,215 @@
+﻿@page "/user"
+@page "/user/{id:int}"
+@inject IUserService UserService
+@inject NavigationManager NavigationManager
+
+@if (Id.HasValue)
+{
+	<PageTitle>Edit @UserData.FirstName, @UserData.LastName</PageTitle>
+	<h3>Edit @UserData.FirstName, @UserData.LastName</h3>
+}
+else
+{
+	<PageTitle>Create a new User</PageTitle>
+	<h3>Create a new User</h3>
+}
+
+<div class="container rounded bg-white mt-5 mb-5">
+	<div class="row">
+		<div class="col-md-3 border-right">
+			<div class="d-flex flex-column align-items-center text-center p-3 py-5">
+				<img class="rounded-circle mt-5" width="150px" src="https://st3.depositphotos.com/15648834/17930/v/600/depositphotos_179308454-stock-illustration-unknown-person-silhouette-glasses-profile.jpg">
+				@if (Id.HasValue)
+				{
+					<span class="font-weight-bold">@UserData.FirstName, @UserData.LastName</span>
+				}
+				<span> </span>
+			</div>
+		</div>
+		<div class="col-md-5 border-right">
+			<div class="p-3 py-5">
+				<div class="d-flex justify-content-between align-items-center mb-3">
+					<h4 class="text-right">User Settings</h4>
+				</div>
+				<div class="row mt-3">
+					<EditForm Model="UserData" OnSubmit="HandleSubmit">
+						<div class="col-md-15">
+							<label for="FirstName">First Name</label>
+							<InputText id="FirstName" @bind-Value="UserData.FirstName" class="form-control"/>
+						</div>
+						<div class="col-md-15">
+							<label for="LastName">Last Name</label>
+							<InputText id="LastName" @bind-Value="UserData.LastName" class="form-control"/>
+						</div>
+						<div class="col-md-15">
+							<label for="DateOfBirth">Date Of Birth</label>
+							<InputDate id="date" @bind-Value="UserData.DateOfBirth" class="form-control"/>
+						</div>
+						<div class="col-md-15">
+							<label for="height">Height(cm)</label>
+							<InputNumber id="height" @bind-Value="UserData.Height" class="form-control"/>
+						</div>
+						<div class="col-md-15">
+							<label for="weight">Weight(kg)</label>
+							<InputNumber id="weight" @bind-Value="UserData.Weight" class="form-control"/>
+						</div>
+						<div class="col-md-15">
+							<label for="Bmi">BMI</label>
+							<div>@UserData.Bmi</div>
+						</div>
+						<div class="col-md-15">
+							<label for="address">Address</label>
+							<InputText id="address" @bind-Value="UserData.Address" class="form-control"/>
+						</div>
+						<div>
+							<label for="genderType">Gender</label>
+							<select id="genderType" class="form-control" @bind="@UserData.Gender">
+								@foreach (var genderType in GenderTypes)
+								{
+									<option value="@genderType.Id">@genderType.Name</option>
+								}
+							</select>
+						</div>
+						<br/>
+						<div style="font-size: 20px; margin-bottom: 20px; font-weight: bold;">
+							<label> General Info </label>
+						</div>
+						<div class="col-md-15">
+							<label for="Allergies">Allergies</label>
+							<InputText id="Allergies" @bind-Value="UserData.Allergies" class="form-control"/>
+						</div>
+						<div class="col-md-15">
+							<label for="activityRate">Activity Rate</label>
+							<InputText id="activityRate" @bind-Value="UserData.ActivityRate" class="form-control"/>
+						</div>
+						<div class="col-md-15">
+							<label for="MedicalHistory">Medical History</label>
+							<InputText id="MedicalHistory" @bind-Value="UserData.MedicalHistory" class="form-control"/>
+						</div>
+						<div class="col-md-15">
+							<label for="TargetWeight">Target Weight</label>
+							<InputNumber id="TargetWeight" @bind-Value="UserData.TargetWeight" class="form-control"/>
+						</div>
+						<div class="col-md-15">
+							<label for="TargetBmi">Target BMI</label>
+							<InputNumber id="TargetBmi" @bind-Value="UserData.TargetBmi" class="form-control"/>
+						</div>
+						<div class="col-md-15">
+							<label for="TargetDate">Target Date</label>
+							<InputDate id="TargetDate" @bind-Value="UserData.TargetDate" class="form-control"/>
+						</div>
+						<br/>
+						<button type="submit" class="btn btn-primary">@_confirmText</button>
+						<button type="button" class="btn btn-secondary" @onclick="Cancel">Cancel</button>
+					</EditForm>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+@code {
+	public string? UserName { get; set; }
+
+	public AJSNutritions.Shared.Domain.User UserData { get; set; } = new()
+		{
+			FirstName = "New",
+			LastName = "User",
+			DateOfBirth = DateTime.Now,
+			Height = 0,
+			Weight = 0,
+			Bmi = 0,
+			Address = "",
+			Allergies = "",
+			ActivityRate = "",
+			MedicalHistory = "",
+			TargetWeight = 0,
+			TargetBmi = 0,
+			TargetDate = DateTime.Now
+		};
+
+	[Parameter] public int? Id { get; set; }
+
+	[CascadingParameter] private Task<AuthenticationState>? AuthenticationStateTask { get; set; }
+
+	string _confirmText = "Create";
+
+	protected override async Task OnInitializedAsync()
+	{
+		if (AuthenticationStateTask != null)
+		{
+			var authState = await AuthenticationStateTask;
+			var user = authState.User;
+
+			if (user.Identity is not null && user.Identity.IsAuthenticated)
+			{
+				UserName = user.Identity.Name;
+			}
+		}
+	}
+
+	protected override async Task OnParametersSetAsync()
+	{
+		if (Id.HasValue)
+		{
+			var result = await UserService.GetUserById(Id.Value);
+
+			if (result != null)
+			{
+				UserData = result;
+				_confirmText = "Save";
+			}
+			else
+			{
+				NavigationManager.NavigateTo("/user");
+			}
+		}
+	}
+
+	private async Task HandleSubmit()
+	{
+		if (Id.HasValue)
+		{
+			// Update the CRUD data to include the UpdatedBy and DateUpdated fields
+			UserData.UpdatedBy = UserName;
+			UserData.DateUpdated = DateTime.Now;
+			await UserService.UpdateUser(Id.Value, UserData);
+		}
+		else
+		{
+			// Update the CRUD data to include the CreatedBy and DateCreated fields
+			UserData.CreatedBy = UserName;
+			UserData.DateCreated = DateTime.Now;
+			await UserService.CreateUser(UserData);
+		}
+
+		NavigationManager.NavigateTo("/users");
+	}
+
+	private void Cancel()
+	{
+		NavigationManager.NavigateTo("/users");
+	}
+
+	List<GenderType> GenderTypes = new List<GenderType>
+	{
+		new GenderType(id: 1, name: "Male"),
+		new GenderType(id: 2, name: "Female"),
+		new GenderType(id: 3, name: "Apache Helicopter"),
+		new GenderType(id: 4, name: "Other")
+	};
+
+	public class GenderType
+	{
+		public GenderType(int id, string name)
+		{
+			Id = id;
+			Name = name;
+		}
+
+		public int Id { get; set; }
+		public string Name { get; set; }
+	}
+
+}

@@ -8,8 +8,6 @@ namespace AJSNutritions.Shared.Domain
 {
 	public class User : BaseDomainModel
 	{
-		public string UserName { get; set; }
-
 		public string FirstName { get; set; }
 
 		public string LastName { get; set; }
