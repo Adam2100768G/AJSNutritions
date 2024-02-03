@@ -1,8 +1,74 @@
 ﻿<h3>FoodContentComponent</h3>
 
 <h5>This is a page for food</h5>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Food Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
 
-<button class="btn btn-dark">Food</button>
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin: 20px;
+        }
+
+        .grid-item {
+            border: 1px solid #ccc;
+            padding: 20px;
+            overflow: hidden;
+        }
+
+            .grid-item img {
+                max-width: 100%;
+                height: auto;
+                object-fit: cover;
+                border-radius: 4px;
+            }
+    </style>
+</head>
+<body>
+
+    <h1>Delicious Food Items</h1>
+
+    <div class="grid-container">
+        <div class="grid-item">
+            <h2>salad</h2>
+            <img src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8c2FsYWR8ZW58MHx8MHx8fDA%3D" alt="Chicken Rice">
+        </div>
+        <div class="grid-item">
+            <h2>Nasi Lemak</h2>
+            <img src="https://www.andy-cooks.com/cdn/shop/articles/20231116072724-c2-a9andy_cooks_thumbnails_nasi_lemak_01.jpg?v=1700389619&width=1600" alt="Nasi Lemak">
+        </div>
+        <div class="grid-item">
+            <h2>French Toast</h2>
+            <img src="https://www.simplyrecipes.com/thmb/dYTJuEuT5bw6SBXLGbMAGO5zi-s=/750x0/filters:no_upscale():max_bytes(150000):strip_icc():format(webp)/Simply-Recipes-French-Toast-Lead-Shot-3b-c3a68a576a9548f5bd43cce3d2d7f4b7.jpg" alt="French Toast">
+        </div>
+        <div class="grid-item">
+            <h2>Scrambled Eggs</h2>
+            <img src="https://hips.hearstapps.com/hmg-prod/images/ghk-digital-scrambledeggs-howto-407-1609272250.jpg?crop=0.446xw:1.00xh;0.292xw,0&resize=980:*" alt="Scrambled Eggs">
+        </div>
+        <div class="grid-item">
+            <h2>Roti Prata</h2>
+            <img src="https://onecms-res.cloudinary.com/image/upload/s--3_zW-Pon--/c_crop,h_1414,w_1885,x_118,y_0/c_fill,g_auto,h_622,w_830/f_auto,q_auto/v1/mediacorp/cna/image/2023/09/13/roti_canai_roti_prata_istock-1296798642.jpg?itok=I7wP6iNZ" alt="Roti Prata">
+        </div>
+        <div class="grid-item">
+            <h2>Satay</h2>
+            <img src="https://www.eatyourselfskinny.com/wp-content/uploads/2023/08/chicken-skewers-5-scaled.jpg" alt="Satay">
+        </div>
+    </div>
+
+</body>
+</html>
+
+
 
 @code {
 
