@@ -2,11 +2,13 @@
 @page "/dish/{id:int}"
 @inject IDishService DishService
 @inject NavigationManager NavigationManager
+@inject HttpInterceptorService _interceptor
+@implements IDisposable
 
 @if(Id.HasValue)
 {
-	<PageTitle>Edit @dish.Name</PageTitle>
-	<h3>Edit @dish.Name</h3>
+	<PageTitle>Edit @DishData.Name</PageTitle>
+	<h3>Edit @DishData.Name</h3>
 }
 else
 {
@@ -14,15 +16,15 @@ else
 	<h3>Create a new Dish</h3>
 }
 
-<EditForm Model="dish" OnSubmit="HandleSubmit">
+<EditForm Model="DishData" OnSubmit="HandleSubmit">
 	<div>
 		<label for="name">Name</label>
-		<InputText id="name" @bind-Value="dish.Name" class="form-control"/>
+		<InputText id="name" @bind-Value="DishData.Name" class="form-control" />
 	</div>
 	<div>
 		<label for="dishType">Dish Type</label>
-		<select id="dishType" class="form-control" @bind="@SelectedDishTypeID">
-			@foreach (var dishType in DishTypes)
+		<select id="dishType" class="form-control" @bind="@DishData.DishType">
+			@foreach (var dishType in _dishTypes)
 			{
 				<option value="@dishType.Id">@dishType.Name</option>
 			}
@@ -30,11 +32,11 @@ else
 	</div>
 	<div>
 		<label for="calories">Calories</label>
-		<InputNumber id="calories" @bind-Value="dish.Calories" class="form-control" />
+		<InputNumber id="calories" @bind-Value="DishData.Calories" class="form-control" />
 	</div>
 	<div>
 		<label for="desc">Description</label>
-		<InputText id="desc" @bind-Value="dish.Description" class="form-control" />
+		<InputText id="desc" @bind-Value="DishData.Description" class="form-control" />
 	</div>
 	<br />
 	<button type="submit" class="btn btn-primary">@_confirmText</button>
@@ -43,22 +45,15 @@ else
 	
 
 @code {
-	[Parameter]
-	public int? Id { get; set; }
+	[Parameter] public int? Id { get; set; }
+	[CascadingParameter] private Task<AuthenticationState>? AuthenticationStateTask { get; set; }
 
-	public AJSNutritions.Shared.Dish dish { get; set; } = new AJSNutritions.Shared.Dish { Name = "New Dish" };
+	public string? UserName { get; set; }
+	public AJSNutritions.Shared.Domain.Dish DishData { get; set; } = new() { Name = "New Dish" };
 
 	string _confirmText = "Create";
 
-	string selectedDishTypeID;
-
-	string SelectedDishTypeID
-	{
-		get => selectedDishTypeID;
-		set { selectedDishTypeID = value; }
-	}
-
-	List<DishType> DishTypes = new List<DishType>
+	readonly List<DishType> _dishTypes = new()
 	{
 		new DishType(1, "Breakfast"),
 		new DishType(2, "Lunch"),
@@ -66,16 +61,32 @@ else
 		new DishType(4, "Snack")
 	};
 
+	protected override async Task OnInitializedAsync()
+	{
+		_interceptor.MonitorEvent();
+		// Get the logged user for CRUD operations
+		if (AuthenticationStateTask != null)
+		{
+			var authState = await AuthenticationStateTask;
+			var user = authState.User;
+
+			if (user.Identity is not null && user.Identity.IsAuthenticated)
+			{
+				UserName = user.Identity.Name;
+			}
+		}
+	}
 
 	protected override async Task OnParametersSetAsync()
 	{
+		_interceptor.MonitorEvent();
 		if (Id.HasValue)
 		{
 			var result = await DishService.GetDishById(Id.Value);
 
 			if (result != null)
 			{
-				dish = result;
+				DishData = result;
 				_confirmText = "Save";
 			}
 			else
@@ -87,18 +98,26 @@ else
 
 	async Task HandleSubmit()
 	{
-		if (dish.Id == 0)
+		_interceptor.MonitorEvent();
+		if (DishData.Id == 0)
 		{
-			await DishService.CreateDish(dish);
+			// Update the CRUD data to include the UpdatedBy and DateUpdated fields
+			DishData.UpdatedBy = UserName;
+			DishData.DateUpdated = DateTime.Now;
+			await DishService.CreateDish(DishData);
 		}
 		else
 		{
-			await DishService.UpdateDish(dish.Id, dish);
+			// Update the CRUD data to include the CreatedBy and DateCreated fields
+			DishData.CreatedBy = UserName;
+			DishData.DateCreated = DateTime.Now;
+			await DishService.UpdateDish(DishData.Id, DishData);
 		}
 	}
 
 	private void Cancel()
 	{
+		_interceptor.MonitorEvent();
 		NavigationManager.NavigateTo("/dishes");
 	}
 
@@ -112,5 +131,10 @@ else
 
 		public int Id { get; set; }
 		public string Name { get; set; }
+	}
+
+	public void Dispose()
+	{
+		_interceptor.DisposeEvent();
 	}
 }

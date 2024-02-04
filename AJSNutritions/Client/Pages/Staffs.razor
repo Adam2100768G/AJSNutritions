@@ -1,0 +1,94 @@
+﻿@page "/staffs"
+@inject IStaffService StaffService
+@inject NavigationManager NavigationManager
+@inject HttpInterceptorService _interceptor
+@implements IDisposable
+
+<h3>Staff</h3>
+
+<table class="table">
+	<thead>
+		<tr>
+			<th>Name</th>
+			<th>Email</th>
+			<th></th>
+		</tr>
+	</thead>
+	<tbody>
+
+		@foreach (var staff in StaffService.Staffs)
+		{
+			<tr>
+				<td>@staff.Name</td>
+				<td>@staff.Email</td>
+				<td>
+					<button class="btn btn-primary"
+							@onclick="() => EditStaff(staff.Id)">
+						<i class="oi oi-pencil"></i>
+					</button>
+					<button class="btn btn-danger"
+							@onclick="() => DeleteStaff(staff.Id)">
+						<i class="oi oi-trash"></i>
+					</button>
+				</td>
+			</tr>
+		}
+	</tbody>
+</table>
+<button class="btn btn-primary"
+		@onclick="CreateNewStaff">
+	Create New Staff
+</button>
+
+<Confirm @ref="DeleteConfirmation"
+         ConfirmationChanged="ConfirmDelete_Click"
+         ConfirmationMessage=@($"Are you sure you want to delete:")>
+
+</Confirm>
+
+
+@code {
+	private ConfirmBase? DeleteConfirmation { get; set; }
+	private int Id { get; set; }
+
+	protected override async Task OnInitializedAsync()
+	{
+		_interceptor.MonitorEvent();
+		await StaffService.GetStaffs();
+	}
+
+	private void EditStaff(int id)
+	{
+		_interceptor.MonitorEvent();
+		NavigationManager.NavigateTo($"/staff/{id}");
+	}
+
+	private void CreateNewStaff()
+	{
+		_interceptor.MonitorEvent();
+		NavigationManager.NavigateTo("/staff");
+	}
+
+	private void DeleteStaff(int id)
+	{
+		_interceptor.MonitorEvent();
+		Id = id;
+		DeleteConfirmation?.Show();
+	}
+
+	private async void ConfirmDelete_Click(bool deleteConfirmed)
+	{
+		_interceptor.MonitorEvent();
+		if (!deleteConfirmed)
+		{
+			return;
+		}
+		await StaffService.DeleteStaff(Id);
+		await StaffService.GetStaffs();
+		await InvokeAsync(StateHasChanged);
+	}
+	public void Dispose()
+	{
+		_interceptor.DisposeEvent();
+	}
+}

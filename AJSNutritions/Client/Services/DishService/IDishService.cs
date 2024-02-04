@@ -1,4 +1,4 @@
-﻿using AJSNutritions.Shared;
+﻿using AJSNutritions.Shared.Domain;
 
 namespace AJSNutritions.Client.Services.DishService;
 

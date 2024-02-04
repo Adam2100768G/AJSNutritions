@@ -1,9 +1,10 @@
 ﻿using AJSNutritions.Server.Data;
-using AJSNutritions.Shared;
+using AJSNutritions.Shared.Domain;
 using Microsoft.EntityFrameworkCore;
 
 namespace AJSNutritions.Server.Services.DishService;
 
+// Server side CRUD service for Dish
 public class DishService: IDishService
 {
 	private readonly ApplicationDbContext _context;
@@ -32,7 +33,7 @@ public class DishService: IDishService
 		return dish;
 	}
 
-	public async Task<Dish> UpdateDish(int id, Dish dish)
+	public async Task<Dish?> UpdateDish(int id, Dish dish)
 	{
 		var toUpdate = await _context.Dishes.FindAsync(id);
 		if (toUpdate == null)
@@ -42,6 +43,11 @@ public class DishService: IDishService
 		toUpdate.Name = dish.Name;
 		toUpdate.Description = dish.Description;
 		toUpdate.Calories = dish.Calories;
+		toUpdate.DishType = dish.DishType;
+		toUpdate.DateCreated = dish.DateCreated;
+		toUpdate.DateUpdated = dish.DateUpdated;
+		toUpdate.UpdatedBy = dish.UpdatedBy;
+		toUpdate.CreatedBy = dish.CreatedBy;
 
 		await _context.SaveChangesAsync();
 

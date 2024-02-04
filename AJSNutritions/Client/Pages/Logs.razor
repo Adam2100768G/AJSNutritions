@@ -1,0 +1,40 @@
+﻿@page "/logs"
+@inject IUserService UserService
+@inject NavigationManager NavigationManager
+@inject HttpInterceptorService _interceptor
+@implements IDisposable
+
+<h3>Logs</h3>
+
+<select id="users" class="form-control" @bind="@SelectedUserId">
+	@foreach (var user in UserService.Users)
+	{
+		<option value="@user.Id">@user.FirstName, @user.LastName</option>
+	}
+</select>
+<br />
+<button class="btn btn-primary"
+        @onclick="ShowFoodLogs">
+	Show Logs for User
+</button>
+
+@code {
+	int SelectedUserId { get; set; }
+
+	protected override async Task OnInitializedAsync()
+	{
+		_interceptor.MonitorEvent();
+		await UserService.GetUsers();
+	}
+
+	private void ShowFoodLogs()
+	{
+		_interceptor.MonitorEvent();
+		NavigationManager.NavigateTo($"/foodlogs/{SelectedUserId}");
+	}
+	public void Dispose()
+	{
+		_interceptor.DisposeEvent();
+	}
+
+}

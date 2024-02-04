@@ -1,9 +1,10 @@
 ﻿using AJSNutritions.Server.Services.FoodLogService;
-using AJSNutritions.Shared;
+using AJSNutritions.Shared.Domain;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AJSNutritions.Server.Controllers;
 
+// Server side CRUD REST controller for FoodLog
 [Route("api/[controller]")]
 [ApiController]
 public class FoodLogController : ControllerBase
@@ -15,32 +16,33 @@ public class FoodLogController : ControllerBase
 		_foodLogService = foodLogService;
 	}
 
-	// This version gets all food logs for a user
-	[HttpGet("all/{id}")]
-	public async Task<List<FoodLogDto>> GetFoodLogsForUser(string id)
+	// This version gets all food logs for a user because food logs have User as the FK
+	[HttpGet("all/{userId}")]
+	public async Task<List<FoodLog>> GetFoodLogsForUser(int userId)
 	{
-		return await _foodLogService.GetFoodLogs(id);
+		return await _foodLogService.GetFoodLogs(userId);
 	}
+
 
 	// GET api/<FoodLogController>/5
 	[HttpGet("{id}")]
-	public async Task<FoodLogDto?> GetFoodLogById(int id)
+	public async Task<FoodLog?> GetFoodLogById(int id)
 	{
 		return await _foodLogService.GetFoodLogById(id);
 	}
 
 	// POST api/<FoodLogController>
 	[HttpPost]
-	public async Task<FoodLogDto?> Post([FromBody] FoodLogDto value)
+	public async Task<FoodLog?> Post([FromBody] FoodLog value)
 	{
 		return await _foodLogService.CreateFoodLog(value);
 	}
 
 	// PUT api/<FoodLogController>/5
 	[HttpPut("{id}")]
-	public async Task Put(int id, [FromBody] FoodLogDto value)
+	public async Task<FoodLog?> Put(int id, [FromBody] FoodLog value)
 	{
-		await _foodLogService.UpdateFoodLog(id, value);
+		return await _foodLogService.UpdateFoodLog(id, value);
 	}
 
 	// DELETE api/<FoodLogController>/5

@@ -24,8 +24,23 @@
 				    </NavLink>
 			    </div>
 			    <div class="nav-item px-3">
-				    <NavLink class="nav-link" href="profile">
-					    <span class="oi oi-person" aria-hidden="true"></span> Profile
+				    <NavLink class="nav-link" href="users">
+					    <span class="oi oi-person" aria-hidden="true"></span> Users
+				    </NavLink>
+			    </div>
+			    <div class="nav-item px-3">
+				    <NavLink class="nav-link" href="staffs">
+					    <span class="oi oi-person" aria-hidden="true"></span> Staffs
+				    </NavLink>
+			    </div>
+			    <div class="nav-item px-3">
+				    <NavLink class="nav-link" href="logs">
+					    <span class="oi oi-person" aria-hidden="true"></span> Logs
+				    </NavLink>
+			    </div>
+			    <div class="nav-item px-3">
+				    <NavLink class="nav-link" href="dishes">
+					    <span class="oi oi-menu" aria-hidden="true"></span> Dishes
 				    </NavLink>
 			    </div>
 		    </Authorized>
@@ -41,15 +56,6 @@
 				    </NavLink>
 			    </div>
 		    </NotAuthorized>
-	    </AuthorizeView>
-		<AuthorizeView Roles=@($"{Constants.Roles.Admin}, {Constants.Roles.Staff}")>
-		    <Authorized>
-			    <div class="nav-item px-3">
-				    <NavLink class="nav-link" href="dishes">
-					    <span class="oi oi-menu" aria-hidden="true"></span> Dishes
-				    </NavLink>
-			    </div>
-		    </Authorized>
 	    </AuthorizeView>
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="" Match="NavLinkMatch.All">

@@ -1,8 +1,10 @@
 ﻿@page "/foodlog"
 @page "/foodlog/{id:int}"
-@inject IDishService DishService
 @inject IFoodLogService FoodLogService
+@inject IDishService DishService
 @inject NavigationManager NavigationManager
+@inject HttpInterceptorService _interceptor
+@implements IDisposable
 
 @if(Id.HasValue)
 {
@@ -14,14 +16,22 @@ else
 	<PageTitle>Create a new Food Log</PageTitle>
 	<h3>Create a new Food Log</h3>
 }
-<EditForm Model="FoodLogDto" OnSubmit="HandleSubmit">
+<EditForm Model="FoodLogData" OnSubmit="HandleSubmit">
 	<div>
 		<label for="date">Date</label>
-		<InputDate id="date" @bind-Value="FoodLogDto.Date" class="form-control" />
+		<InputDate id="date" @bind-Value="FoodLogData.Date" class="form-control" />
+	</div>
+	<div>
+		<label for="desc">Description</label>
+		<InputText id="desc" @bind-Value="FoodLogData.Description" class="form-control" />
+	</div>
+	<div>
+		<label for="quantity">Quantity</label>
+		<InputNumber id="quantity" @bind-Value="FoodLogData.Quantity" class="form-control" />
 	</div>
 	<div>
 		<label for="dish">Dish</label>
-		<select id="dish" class="form-control" @bind="@SelectedDishID">
+		<select id="dish" class="form-control" @bind="FoodLogData.DishId">
 			@foreach (var dish in DishService.Dishes)
 			{
 				<option value="@dish.Id">@dish.Name</option>
@@ -39,38 +49,20 @@ else
 	[Parameter]
 	public int? Id { get; set; }
 
-	public FoodLogDto FoodLogDto { get; set; } = new AJSNutritions.Shared.FoodLogDto { Date = DateTime.Now };
+	public AJSNutritions.Shared.Domain.FoodLog FoodLogData { get; set; } = new AJSNutritions.Shared.Domain.FoodLog { Date = DateTime.Now };
 	
 	string _confirmText = "Create New Food Log";
-	string? _userName;
 
-	[CascadingParameter] private Task<AuthenticationState>? AuthenticationStateTask { get; set; }
-
-
-	string selectedFoodLogID;
-	int selectedDishID;
-
-	int SelectedDishID
-	{
-		get => selectedDishID;
-		set { selectedDishID = value; }
-	}
-
-	string SelectedFoodLogID
-	{
-		get => selectedFoodLogID;
-		set { selectedFoodLogID = value; }
-	}
-
-	// When loaded, get the list of dishes
 	protected override async Task OnInitializedAsync()
 	{
+		_interceptor.MonitorEvent();
+		// On page load available dishes for the select to use.
 		await DishService.GetDishes();
-		await GetUser();
 	}
 
 	protected override async Task OnParametersSetAsync()
 	{
+		_interceptor.MonitorEvent();
 		// The food log will be edited if the food id is provided in the URL.
 		if (Id.HasValue)
 		{
@@ -82,7 +74,7 @@ else
 			}
 			else 			
 			{
-				FoodLogDto = result;
+				FoodLogData = result;
 				_confirmText = "Save";
 			}
 		}
@@ -90,32 +82,27 @@ else
 
 	async Task HandleSubmit()
 	{
+		_interceptor.MonitorEvent();
 		if (Id.HasValue)
 		{	// Update the food log
-			await FoodLogService.UpdateFoodLog(Id.Value, FoodLogDto);
+			await FoodLogService.UpdateFoodLog(Id.Value, FoodLogData);
 		}
 		else
 		{  // Create the food log
-			FoodLogDto.UserName = _userName;
-			await FoodLogService.CreateFoodLog(FoodLogDto);
+			await FoodLogService.CreateFoodLog(FoodLogData);
 		}
 		// After creating a new food or editing an existing log, navigate to the food log list page
-		NavigationManager.NavigateTo("/");
+		NavigationManager.NavigateTo($"/foodlogs/{FoodLogData.UserId}");
 	}
 
 	void Cancel()
-	{	// Navigate back to the food log list
-		NavigationManager.NavigateTo("/");
-	}
-
-	private async Task GetUser()
 	{
-		var authState = await AuthenticationStateTask;
-		var user = authState.User;
-
-		if (user.Identity is not null && user.Identity.IsAuthenticated)
-		{
-			_userName = user.Identity.Name;
-		}
+		_interceptor.MonitorEvent();
+		// Navigate back to the food log list
+		NavigationManager.NavigateTo($"/foodlogs/{FoodLogData.UserId}");
+	}
+	public void Dispose()
+	{
+		_interceptor.DisposeEvent();
 	}
 }

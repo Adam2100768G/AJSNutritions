@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace AJSNutritions.Server.Data
 {
+	// Not needed, we are not using roles
 	public class DataSeeder
 	{
 		public static async Task SeedData(ApplicationDbContext context, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)

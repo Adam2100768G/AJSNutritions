@@ -1,11 +1,12 @@
 ﻿using AJSNutritions.Server.Data;
 using AJSNutritions.Server.Models;
-using AJSNutritions.Shared;
+using AJSNutritions.Shared.Domain;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace AJSNutritions.Server.Services.FoodLogService;
 
+// Server side CRUD implementation for FoodLog
 public class FoodLogService : IFoodLogService
 {
 	private readonly ApplicationDbContext _context;
@@ -17,76 +18,57 @@ public class FoodLogService : IFoodLogService
 		_userManager = userManager;
 	}
 
-	public async Task<List<FoodLogDto>> GetFoodLogs(string userName)
+	// FoodLogs have a foreign key to the user, so we need to get the user's food logs
+	public async Task<List<FoodLog>> GetFoodLogs(int userId)
 	{
-		// get the userId for the given userName
-		ApplicationUser? user = await GetUserByName(userName);
-
-		if (user == null)
-		{
-			throw new ApplicationException("User not found");
-		}
-
 		return await _context.FoodLogs
-			.Where(fl => fl.ApplicationUserId == user.Id) // Get all the food logs for the user
-			.Select(fl => new FoodLogDto					// create a DTO to return
+			.Where(fl => fl.UserId == userId)		// Get all the food logs for the user
+			.Select(fl => new FoodLog					// create a DTO to return
 			{
 				Id = fl.Id,
+				Description = fl.Description,
+				Quantity = fl.Quantity,
+				DishId = fl.DishId,
 				Date = fl.Date,
-				UserName = userName,
+				CreatedBy = fl.CreatedBy,
+				DateCreated = fl.DateCreated,
+				UpdatedBy = fl.UpdatedBy,
+				DateUpdated = fl.DateUpdated
 			}).ToListAsync();
 	}
 
-	public async Task<FoodLogDto?> GetFoodLogById(int id)
+	public async Task<FoodLog?> GetFoodLogById(int id)
 	{
 		var foodLog = await _context.FoodLogs.FindAsync(id);
-
-		if (foodLog == null)
-		{
-			return null;
-		}
-		ApplicationUser? user = await GetUserById(foodLog.ApplicationUserId);
-
-		if (user == null)
-		{
-			return null;
-		}
-
-		return new FoodLogDto
-		{
-			Id = foodLog.Id,
-			Date = foodLog.Date,
-			UserName = user.UserName,
-		};
+		return foodLog;
 	}
 
-	public async Task<FoodLogDto> CreateFoodLog(FoodLogDto foodLogDto)
+	public async Task<FoodLog> CreateFoodLog(FoodLog foodLog)
 	{
-		// get the user
-		ApplicationUser user = await GetUserByName(foodLogDto.UserName);
-
-		if (user == null)
-		{
-			throw new ApplicationException("User not found");
-		}
-
-		var foodLog = new FoodLog
-		{
-			Date = foodLogDto.Date,
-			ApplicationUserId = user.Id,
-		};
-
 		_context.FoodLogs.Add(foodLog);
 		await _context.SaveChangesAsync();
-
-		foodLogDto.Id = foodLog.Id;
-
-		return foodLogDto;
+		return foodLog;
 	}
 
-	public async Task<FoodLogDto> UpdateFoodLog(int id, FoodLogDto foodLogDto)
+	public async Task<FoodLog?> UpdateFoodLog(int id, FoodLog foodLog)
 	{
-		return null;
+		var toUpdate = await _context.FoodLogs.FindAsync(id);
+		if (toUpdate == null)
+		{
+			return null;
+		}
+		toUpdate.Date = foodLog.Date;
+		toUpdate.Description = foodLog.Description;
+		toUpdate.Quantity = foodLog.Quantity;
+		toUpdate.DishId = foodLog.DishId;
+		toUpdate.UpdatedBy = foodLog.UpdatedBy;
+		toUpdate.DateUpdated = foodLog.DateUpdated;
+		toUpdate.DateCreated = foodLog.DateCreated;
+		toUpdate.CreatedBy = foodLog.CreatedBy;
+
+		await _context.SaveChangesAsync();
+
+		return toUpdate;
 	}
 
 	public async Task<bool> DeleteFoodLog(int id)
@@ -101,29 +83,5 @@ public class FoodLogService : IFoodLogService
 		await _context.SaveChangesAsync();
 
 		return true;
-	}
-
-	private async Task<ApplicationUser?> GetUserByName(string userName)
-	{
-		var user = await _userManager.FindByNameAsync(userName);
-
-		if (user == null)
-		{
-			return null;
-		}
-
-		return user;
-	}
-	
-	private async Task<ApplicationUser?> GetUserById(string id)
-	{
-		var user = await _userManager.FindByIdAsync(id);
-
-		if (user == null)
-		{
-			return null;
-		}
-
-		return user;
 	}
 }

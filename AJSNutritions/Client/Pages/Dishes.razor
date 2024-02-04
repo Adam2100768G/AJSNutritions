@@ -1,6 +1,8 @@
 ﻿@page "/dishes"
 @inject IDishService DishService
 @inject NavigationManager NavigationManager
+@inject HttpInterceptorService _interceptor
+@implements IDisposable
 
 <h3>Dishes</h3>
 
@@ -46,37 +48,47 @@
 </Confirm>
 
 @code {
-	private ConfirmBase DeleteConfirmation { get; set; }
+	private ConfirmBase? DeleteConfirmation { get; set; }
 	private int Id { get; set; }
 
 	protected override async Task OnInitializedAsync()
 	{
+		_interceptor.MonitorEvent();
 		await DishService.GetDishes();
 	}
 
 	void ShowDish(int id)
 	{
+		_interceptor.MonitorEvent();
 		NavigationManager.NavigateTo($"/dish/{id}");
 	}
 
 	private void CreateNewDish()
 	{
+		_interceptor.MonitorEvent();
 		NavigationManager.NavigateTo("/dish");
 	}
 
-	private async void DeleteDish(int id)
+	private void DeleteDish(int id)
 	{
+		_interceptor.MonitorEvent();
 		Id = id;
-		DeleteConfirmation.Show();
+		DeleteConfirmation?.Show();
 	}
 
 	private async void ConfirmDelete_Click(bool deleteConfirmed)
 	{
-		if (deleteConfirmed)
+		_interceptor.MonitorEvent();
+		if (!deleteConfirmed)
 		{
-			await DishService.DeleteDish(Id);
-			await DishService.GetDishes();
-			await InvokeAsync(StateHasChanged);
+			return;
 		}
+		await DishService.DeleteDish(Id);
+		await DishService.GetDishes();
+		await InvokeAsync(StateHasChanged);
+	}
+	public void Dispose()
+	{
+		_interceptor.DisposeEvent();
 	}
 }

@@ -1,79 +1,74 @@
 ﻿using System.Net.Http.Json;
 using AJSNutritions.Shared;
+using AJSNutritions.Shared.Domain;
 using Microsoft.AspNetCore.Components;
 
 namespace AJSNutritions.Client.Services.FoodLogService;
 
 public class FoodLogService : IFoodLogService
 {
-	private readonly HttpClient _httpClient;
+	private readonly HttpClient _client;
 
-	public FoodLogService(HttpClient httpClient)
+	public FoodLogService(HttpClient client)
 	{
-		_httpClient = httpClient;
+		_client = client;
 	}
 
-	public List<FoodLogDto> FoodLogs { get; set; } = new();
-
-
-	public async Task GetFoodLogs(string userId)
+	public async Task<List<FoodLog>> GetFoodLogs(int userId)
 	{
-		var result = await _httpClient.GetAsync($"api/foodlog/all/{userId}");
-		if (result.IsSuccessStatusCode)
+		var response = await _client.GetAsync($"api/foodlog/all/{userId}");
+
+		if (!response.IsSuccessStatusCode)
 		{
-			FoodLogs = await result.Content.ReadFromJsonAsync<List<FoodLogDto>>();
+			return new List<FoodLog>();
+		}
+		var data = await response.Content.ReadFromJsonAsync<List<FoodLog>>();
+
+		return data ?? new List<FoodLog>();
+	}
+
+	public async Task<FoodLog?> GetFoodLogById(int id)
+	{
+		var response = await _client.GetAsync($"api/foodlog/{id}");
+		if (!response.IsSuccessStatusCode)
+		{
+			return null;
+		}
+
+		try
+		{
+			return await response.Content.ReadFromJsonAsync<FoodLog>();
+		}
+		catch (Exception e)
+		{
+			return null;
 		}
 	}
 
-	public async Task<FoodLogDto?> GetFoodLogById(int id)
+	public async Task<FoodLog?> CreateFoodLog(FoodLog foodLog)
 	{
-		return await _httpClient.GetFromJsonAsync<FoodLogDto>($"api/foodlog/{id}");
-	}
-
-	public async Task<FoodLogDto?> CreateFoodLog(FoodLogDto foodLogDto)
-	{
-		var response = await _httpClient.PostAsJsonAsync("api/foodlog", foodLogDto);
+		var response = await _client.PostAsJsonAsync("api/foodlog", foodLog);
 		if (response.IsSuccessStatusCode)
 		{
-			var res = await response.Content.ReadFromJsonAsync<FoodLogDto>();
-
-			FoodLogs.Add(res);
-
-			return res;
+			return await response.Content.ReadFromJsonAsync<FoodLog>();
 		}
-		else
-		{
-			throw new ApplicationException(await response.Content.ReadAsStringAsync());
-		}
+
+		return null;
 	}
 
-	public async Task UpdateFoodLog(int id, FoodLogDto foodLogDto)
+	public async Task<FoodLog?> UpdateFoodLog(int id, FoodLog foodLog)
 	{
-		var response = await _httpClient.PutAsJsonAsync($"api/foodlog/{id}", foodLogDto);
-		if (response.IsSuccessStatusCode)
+		var response = await _client.PutAsJsonAsync($"api/foodlog/{id}", foodLog);
+		if (!response.IsSuccessStatusCode)
 		{
-			var index = FoodLogs.FindIndex(f => f.Id == id);
-			if (index != -1)
-			{
-				FoodLogs[index] = foodLogDto;
-			}
+			return null;
 		}
-		else
-		{
-			throw new ApplicationException(await response.Content.ReadAsStringAsync());
-		}
+
+		return await response.Content.ReadFromJsonAsync<FoodLog>();
 	}
 
 	public async Task DeleteFoodLog(int id)
 	{
-		var response = await _httpClient.DeleteAsync($"api/foodlog/{id}");
-		if (response.IsSuccessStatusCode)
-		{
-			FoodLogs.Remove(FoodLogs.Find(f => f.Id == id));
-		}
-		else
-		{
-			throw new ApplicationException(await response.Content.ReadAsStringAsync());
-		}
+		await _client.DeleteAsync($"api/foodlog/{id}");
 	}
 }

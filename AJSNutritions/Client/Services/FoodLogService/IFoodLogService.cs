@@ -1,18 +1,16 @@
-﻿using AJSNutritions.Shared;
+﻿using AJSNutritions.Shared.Domain;
 
 namespace AJSNutritions.Client.Services.FoodLogService
 {
     public interface IFoodLogService
 	{
-		List<FoodLogDto> FoodLogs { get; set; }
+		Task<List<FoodLog>> GetFoodLogs(int userId);
 
-		Task GetFoodLogs(string userId);
+		Task<FoodLog?> GetFoodLogById(int id);
 
-		Task<FoodLogDto?> GetFoodLogById(int id);
+		Task<FoodLog?> CreateFoodLog(FoodLog foodLog);
 
-		Task<FoodLogDto?> CreateFoodLog(FoodLogDto foodLogDto);
-
-		Task UpdateFoodLog(int id, FoodLogDto foodLogDto);
+		Task<FoodLog?> UpdateFoodLog(int id, FoodLog foodLog);
 
 		Task DeleteFoodLog(int id);
 	}

@@ -1,0 +1,101 @@
+﻿@page "/users"
+@inject IUserService UserService
+@inject NavigationManager NavigationManager
+@inject HttpInterceptorService _interceptor
+@implements IDisposable
+
+<h3>Users</h3>
+
+<table class="table">
+	<thead>
+		<tr>
+			<th>First Name</th>
+			<th>Last Name</th>
+			<th>Height</th>
+			<th>Weight</th>
+			<th>BMI</th>
+			<th></th>
+		</tr>
+	</thead>
+	<tbody>
+
+		@foreach (var user in UserService.Users)
+		{
+			<tr>
+				<td>@user.FirstName</td>
+				<td>@user.LastName</td>
+				<td>@user.Height</td>
+				<td>@user.Weight</td>
+				<td>@user.Bmi</td>
+				<td>
+					<button class="btn btn-primary"
+							@onclick="() => EditUser(user.Id)">
+						<i class="oi oi-pencil"></i>
+					</button>
+					<button class="btn btn-danger"
+							@onclick="() => DeleteUser(user.Id)">
+						<i class="oi oi-trash"></i>
+					</button>
+				</td>
+			</tr>
+		}
+	</tbody>
+</table>
+<button class="btn btn-primary"
+		@onclick="CreateNewUser">
+	Create New User
+</button>
+
+<Confirm @ref="DeleteConfirmation"
+         ConfirmationChanged="ConfirmDelete_Click"
+         ConfirmationMessage=@($"Are you sure you want to delete:")>
+
+</Confirm>
+
+
+@code {
+	private ConfirmBase? DeleteConfirmation { get; set; }
+	private int Id { get; set; }
+
+	protected override async Task OnInitializedAsync()
+	{
+		_interceptor.MonitorEvent();
+		await UserService.GetUsers();
+	}
+
+	private void EditUser(int id)
+	{
+		_interceptor.MonitorEvent();
+		NavigationManager.NavigateTo($"/user/{id}");
+	}
+
+	private void CreateNewUser()
+	{
+		_interceptor.MonitorEvent();
+		NavigationManager.NavigateTo("/user");
+	}
+
+	private void DeleteUser(int id)
+	{
+		_interceptor.MonitorEvent();
+		Id = id;
+		DeleteConfirmation?.Show();
+	}
+
+	private async void ConfirmDelete_Click(bool deleteConfirmed)
+	{
+		_interceptor.MonitorEvent();
+		if (!deleteConfirmed)
+		{
+			return;
+		}
+		await UserService.DeleteUser(Id);
+		await UserService.GetUsers();
+		await InvokeAsync(StateHasChanged);
+	}
+
+	public void Dispose()
+	{
+		_interceptor.DisposeEvent();
+	}
+}

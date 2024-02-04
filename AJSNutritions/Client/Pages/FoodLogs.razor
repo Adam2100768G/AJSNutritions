@@ -1,0 +1,171 @@
+﻿@page "/foodlogs/{id:int}"
+@inject IUserService UserService
+@inject IFoodLogService FoodLogService
+@inject NavigationManager NavigationManager
+@inject HttpInterceptorService _interceptor
+@implements IDisposable
+
+@if (Id.HasValue)
+{
+	<PageTitle>Food Logs</PageTitle>
+	<h3>Food Logs, For User: @UserName</h3>
+}
+else
+{
+	<PageTitle>Invalid User For Food Log</PageTitle>
+	<h3>Invalid User for food log</h3>
+}
+
+<table class="table">
+	<thead>
+	<tr>
+		<th>Date</th>
+		<th>Description</th>
+		<th></th>
+	</tr>
+	</thead>
+	<tbody>
+
+	@foreach (var foodLog in FoodLogData)
+	{
+		<tr>
+			<td>@foodLog.Date</td>
+			<td>@foodLog.Description</td>
+			<td>
+				<button class="btn btn-primary"
+				        @onclick="() => ShowFoodLog(foodLog.Id)">
+					<i class="oi oi-pencil"></i>
+				</button>
+				<button class="btn btn-danger"
+				        @onclick="() => DeleteFoodLog(foodLog.Id)">
+					<i class="oi oi-trash"></i>
+				</button>
+			</td>
+		</tr>
+	}
+	</tbody>
+</table>
+<button class="btn btn-primary"
+        @onclick="CreateFoodLog">
+	New Food Log
+</button>
+<button type="button" class="btn btn-secondary" @onclick="BackHome">Return</button>
+
+<Confirm @ref="DeleteConfirmation"
+         ConfirmationChanged="ConfirmDelete_Click"
+         ConfirmationMessage=@($"Are you sure you want to delete:")>
+
+</Confirm>
+
+@code {
+	// The user this the logs are for.
+	private AJSNutritions.Shared.Domain.User? User { get; set; }
+	private List<AJSNutritions.Shared.Domain.FoodLog> FoodLogData { get; set; } = new();
+	private string UserName { get; set; } = "unknown user";
+	// The name of the logged in user who is creating the food log for the CRUD operations
+	private string EditorName { get; set; } = "unknown";
+	// The delete confirmation component
+	private ConfirmBase? DeleteConfirmation { get; set; }
+	private int ToDeleteId { get; set; }
+
+	[Parameter] public int? Id { get; set; }
+
+	[CascadingParameter] private Task<AuthenticationState>? AuthenticationStateTask { get; set; }
+
+	protected override async Task OnInitializedAsync()
+	{
+		_interceptor.MonitorEvent();
+		if (AuthenticationStateTask != null)
+		{
+			var authState = await AuthenticationStateTask;
+			var user = authState.User;
+
+			if (user.Identity is not null && user.Identity.IsAuthenticated)
+			{
+				EditorName = user.Identity.Name;
+			}
+		}
+	}
+
+	protected override async Task OnParametersSetAsync()
+	{
+		_interceptor.MonitorEvent();
+		if (Id.HasValue)
+		{
+			var result = await UserService.GetUserById(Id.Value);
+
+			if (result == null)
+			{
+				return;
+			}
+
+			// Assign the user to the User property
+			User = result;
+			UserName = $"{User.FirstName} {User.LastName}";
+			// Get the user's food logs
+			FoodLogData = await FoodLogService.GetFoodLogs(User.Id);
+		}
+	}
+
+	void ShowFoodLog(int id)
+	{
+		_interceptor.MonitorEvent();
+		NavigationManager.NavigateTo($"/foodlog/{id}");
+	}
+
+	private async void CreateFoodLog()
+	{
+		_interceptor.MonitorEvent();
+		if (User == null)
+		{
+			return;
+		}
+		// Create a new food log for the user
+		// Then navigate to the food log page to edit.
+		var created = await FoodLogService.CreateFoodLog(new AJSNutritions.Shared.Domain.FoodLog()
+		{
+			CreatedBy = EditorName,
+			DateCreated = DateTime.Now,
+			Date = DateTime.Now,
+			UserId = User.Id
+		});
+
+		if (created == null)
+		{
+			return;
+		}
+
+		NavigationManager.NavigateTo($"/foodlog/{created.Id}");
+	}
+	
+	private void BackHome()
+	{
+		_interceptor.MonitorEvent();
+		NavigationManager.NavigateTo($"/");
+	}
+
+	private void DeleteFoodLog(int id)
+	{
+		_interceptor.MonitorEvent();
+		// Remember the id of the food log to delete
+		ToDeleteId = id;
+		// Show the delete confirmation dialog
+		DeleteConfirmation?.Show();
+	}
+
+	private async void ConfirmDelete_Click(bool deleteConfirmed)
+	{
+		_interceptor.MonitorEvent();
+		if (deleteConfirmed)
+		{
+			await FoodLogService.DeleteFoodLog(ToDeleteId);
+			FoodLogData = await FoodLogService.GetFoodLogs(User.Id);
+			// redraw the remaining logs
+			await InvokeAsync(StateHasChanged);
+		}
+	}
+	public void Dispose()
+	{
+		_interceptor.DisposeEvent();
+	}
+}
