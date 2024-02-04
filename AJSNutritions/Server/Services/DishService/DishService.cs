@@ -43,6 +43,11 @@ public class DishService: IDishService
 		toUpdate.Name = dish.Name;
 		toUpdate.Description = dish.Description;
 		toUpdate.Calories = dish.Calories;
+		toUpdate.DishType = dish.DishType;
+		toUpdate.DateCreated = dish.DateCreated;
+		toUpdate.DateUpdated = dish.DateUpdated;
+		toUpdate.UpdatedBy = dish.UpdatedBy;
+		toUpdate.CreatedBy = dish.CreatedBy;
 
 		await _context.SaveChangesAsync();
 

@@ -1,6 +1,8 @@
 ﻿@page "/logs"
 @inject IUserService UserService
 @inject NavigationManager NavigationManager
+@inject HttpInterceptorService _interceptor
+@implements IDisposable
 
 <h3>Logs</h3>
 
@@ -21,12 +23,18 @@
 
 	protected override async Task OnInitializedAsync()
 	{
+		_interceptor.MonitorEvent();
 		await UserService.GetUsers();
 	}
 
 	private void ShowFoodLogs()
 	{
+		_interceptor.MonitorEvent();
 		NavigationManager.NavigateTo($"/foodlogs/{SelectedUserId}");
+	}
+	public void Dispose()
+	{
+		_interceptor.DisposeEvent();
 	}
 
 }

@@ -1,6 +1,8 @@
 ﻿@page "/staffs"
 @inject IStaffService StaffService
 @inject NavigationManager NavigationManager
+@inject HttpInterceptorService _interceptor
+@implements IDisposable
 
 <h3>Staff</h3>
 
@@ -51,27 +53,32 @@
 
 	protected override async Task OnInitializedAsync()
 	{
+		_interceptor.MonitorEvent();
 		await StaffService.GetStaffs();
 	}
 
 	private void EditStaff(int id)
 	{
+		_interceptor.MonitorEvent();
 		NavigationManager.NavigateTo($"/staff/{id}");
 	}
 
 	private void CreateNewStaff()
 	{
+		_interceptor.MonitorEvent();
 		NavigationManager.NavigateTo("/staff");
 	}
 
 	private void DeleteStaff(int id)
 	{
+		_interceptor.MonitorEvent();
 		Id = id;
 		DeleteConfirmation?.Show();
 	}
 
 	private async void ConfirmDelete_Click(bool deleteConfirmed)
 	{
+		_interceptor.MonitorEvent();
 		if (!deleteConfirmed)
 		{
 			return;
@@ -79,5 +86,9 @@
 		await StaffService.DeleteStaff(Id);
 		await StaffService.GetStaffs();
 		await InvokeAsync(StateHasChanged);
+	}
+	public void Dispose()
+	{
+		_interceptor.DisposeEvent();
 	}
 }

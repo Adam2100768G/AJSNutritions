@@ -1,9 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
 using System.Net;
 using Toolbelt.Blazor;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 namespace AJSNutritions.Client.Services
 {
 	public class HttpInterceptorService

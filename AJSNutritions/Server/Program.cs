@@ -10,6 +10,7 @@ using System.IdentityModel.Tokens.Jwt;
 using AJSNutritions.Server.Services.FoodLogService;
 using AJSNutritions.Server.Services.UserService;
 using AJSNutritions.Server.Services.StaffService;
+using AJSNutritions.Client.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 

@@ -1,6 +1,8 @@
 ﻿@page "/dishes"
 @inject IDishService DishService
 @inject NavigationManager NavigationManager
+@inject HttpInterceptorService _interceptor
+@implements IDisposable
 
 <h3>Dishes</h3>
 
@@ -51,27 +53,32 @@
 
 	protected override async Task OnInitializedAsync()
 	{
+		_interceptor.MonitorEvent();
 		await DishService.GetDishes();
 	}
 
 	void ShowDish(int id)
 	{
+		_interceptor.MonitorEvent();
 		NavigationManager.NavigateTo($"/dish/{id}");
 	}
 
 	private void CreateNewDish()
 	{
+		_interceptor.MonitorEvent();
 		NavigationManager.NavigateTo("/dish");
 	}
 
 	private void DeleteDish(int id)
 	{
+		_interceptor.MonitorEvent();
 		Id = id;
 		DeleteConfirmation?.Show();
 	}
 
 	private async void ConfirmDelete_Click(bool deleteConfirmed)
 	{
+		_interceptor.MonitorEvent();
 		if (!deleteConfirmed)
 		{
 			return;
@@ -79,5 +86,9 @@
 		await DishService.DeleteDish(Id);
 		await DishService.GetDishes();
 		await InvokeAsync(StateHasChanged);
+	}
+	public void Dispose()
+	{
+		_interceptor.DisposeEvent();
 	}
 }

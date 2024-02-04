@@ -2,6 +2,8 @@
 @page "/dish/{id:int}"
 @inject IDishService DishService
 @inject NavigationManager NavigationManager
+@inject HttpInterceptorService _interceptor
+@implements IDisposable
 
 @if(Id.HasValue)
 {
@@ -61,6 +63,7 @@ else
 
 	protected override async Task OnInitializedAsync()
 	{
+		_interceptor.MonitorEvent();
 		// Get the logged user for CRUD operations
 		if (AuthenticationStateTask != null)
 		{
@@ -76,6 +79,7 @@ else
 
 	protected override async Task OnParametersSetAsync()
 	{
+		_interceptor.MonitorEvent();
 		if (Id.HasValue)
 		{
 			var result = await DishService.GetDishById(Id.Value);
@@ -94,6 +98,7 @@ else
 
 	async Task HandleSubmit()
 	{
+		_interceptor.MonitorEvent();
 		if (DishData.Id == 0)
 		{
 			// Update the CRUD data to include the UpdatedBy and DateUpdated fields
@@ -112,6 +117,7 @@ else
 
 	private void Cancel()
 	{
+		_interceptor.MonitorEvent();
 		NavigationManager.NavigateTo("/dishes");
 	}
 
@@ -125,5 +131,10 @@ else
 
 		public int Id { get; set; }
 		public string Name { get; set; }
+	}
+
+	public void Dispose()
+	{
+		_interceptor.DisposeEvent();
 	}
 }

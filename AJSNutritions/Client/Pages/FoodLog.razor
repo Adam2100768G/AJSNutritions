@@ -3,6 +3,8 @@
 @inject IFoodLogService FoodLogService
 @inject IDishService DishService
 @inject NavigationManager NavigationManager
+@inject HttpInterceptorService _interceptor
+@implements IDisposable
 
 @if(Id.HasValue)
 {
@@ -53,12 +55,14 @@ else
 
 	protected override async Task OnInitializedAsync()
 	{
+		_interceptor.MonitorEvent();
 		// On page load available dishes for the select to use.
 		await DishService.GetDishes();
 	}
 
 	protected override async Task OnParametersSetAsync()
 	{
+		_interceptor.MonitorEvent();
 		// The food log will be edited if the food id is provided in the URL.
 		if (Id.HasValue)
 		{
@@ -78,6 +82,7 @@ else
 
 	async Task HandleSubmit()
 	{
+		_interceptor.MonitorEvent();
 		if (Id.HasValue)
 		{	// Update the food log
 			await FoodLogService.UpdateFoodLog(Id.Value, FoodLogData);
@@ -91,7 +96,13 @@ else
 	}
 
 	void Cancel()
-	{	// Navigate back to the food log list
+	{
+		_interceptor.MonitorEvent();
+		// Navigate back to the food log list
 		NavigationManager.NavigateTo($"/foodlogs/{FoodLogData.UserId}");
+	}
+	public void Dispose()
+	{
+		_interceptor.DisposeEvent();
 	}
 }

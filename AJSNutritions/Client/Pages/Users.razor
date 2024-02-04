@@ -1,6 +1,8 @@
 ﻿@page "/users"
 @inject IUserService UserService
 @inject NavigationManager NavigationManager
+@inject HttpInterceptorService _interceptor
+@implements IDisposable
 
 <h3>Users</h3>
 
@@ -57,27 +59,32 @@
 
 	protected override async Task OnInitializedAsync()
 	{
+		_interceptor.MonitorEvent();
 		await UserService.GetUsers();
 	}
 
 	private void EditUser(int id)
 	{
+		_interceptor.MonitorEvent();
 		NavigationManager.NavigateTo($"/user/{id}");
 	}
 
 	private void CreateNewUser()
 	{
+		_interceptor.MonitorEvent();
 		NavigationManager.NavigateTo("/user");
 	}
 
 	private void DeleteUser(int id)
 	{
+		_interceptor.MonitorEvent();
 		Id = id;
 		DeleteConfirmation?.Show();
 	}
 
 	private async void ConfirmDelete_Click(bool deleteConfirmed)
 	{
+		_interceptor.MonitorEvent();
 		if (!deleteConfirmed)
 		{
 			return;
@@ -85,5 +92,10 @@
 		await UserService.DeleteUser(Id);
 		await UserService.GetUsers();
 		await InvokeAsync(StateHasChanged);
+	}
+
+	public void Dispose()
+	{
+		_interceptor.DisposeEvent();
 	}
 }

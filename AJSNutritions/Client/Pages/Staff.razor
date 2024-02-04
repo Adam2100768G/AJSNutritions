@@ -2,6 +2,8 @@
 @page "/staff/{id:int}"
 @inject IStaffService StaffService
 @inject NavigationManager NavigationManager
+@inject HttpInterceptorService _interceptor
+@implements IDisposable
 
 @if (Id.HasValue)
 {
@@ -96,6 +98,7 @@ else
 
 	protected override async Task OnInitializedAsync()
 	{
+		_interceptor.MonitorEvent();
 		if (AuthenticationStateTask != null)
 		{
 			var authState = await AuthenticationStateTask;
@@ -110,6 +113,7 @@ else
 
 	protected override async Task OnParametersSetAsync()
 	{
+		_interceptor.MonitorEvent();
 		if (Id.HasValue)
 		{
 			var result = await StaffService.GetStaffById(Id.Value);
@@ -128,6 +132,7 @@ else
 
 	private async Task HandleSubmit()
 	{
+		_interceptor.MonitorEvent();
 		if (Id.HasValue)
 		{
 			// Update the CRUD data to include the UpdatedBy and DateUpdated fields
@@ -148,6 +153,7 @@ else
 
 	private void Cancel()
 	{
+		_interceptor.MonitorEvent();
 		NavigationManager.NavigateTo("/staffs");
 	}
 
@@ -169,5 +175,9 @@ else
 
 		public int Id { get; set; }
 		public string Name { get; set; }
+	}
+	public void Dispose()
+	{
+		_interceptor.DisposeEvent();
 	}
 }

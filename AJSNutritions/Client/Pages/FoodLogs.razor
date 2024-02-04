@@ -2,6 +2,8 @@
 @inject IUserService UserService
 @inject IFoodLogService FoodLogService
 @inject NavigationManager NavigationManager
+@inject HttpInterceptorService _interceptor
+@implements IDisposable
 
 @if (Id.HasValue)
 {
@@ -72,6 +74,7 @@ else
 
 	protected override async Task OnInitializedAsync()
 	{
+		_interceptor.MonitorEvent();
 		if (AuthenticationStateTask != null)
 		{
 			var authState = await AuthenticationStateTask;
@@ -86,6 +89,7 @@ else
 
 	protected override async Task OnParametersSetAsync()
 	{
+		_interceptor.MonitorEvent();
 		if (Id.HasValue)
 		{
 			var result = await UserService.GetUserById(Id.Value);
@@ -105,11 +109,13 @@ else
 
 	void ShowFoodLog(int id)
 	{
+		_interceptor.MonitorEvent();
 		NavigationManager.NavigateTo($"/foodlog/{id}");
 	}
 
 	private async void CreateFoodLog()
 	{
+		_interceptor.MonitorEvent();
 		if (User == null)
 		{
 			return;
@@ -134,11 +140,13 @@ else
 	
 	private void BackHome()
 	{
+		_interceptor.MonitorEvent();
 		NavigationManager.NavigateTo($"/");
 	}
 
 	private void DeleteFoodLog(int id)
 	{
+		_interceptor.MonitorEvent();
 		// Remember the id of the food log to delete
 		ToDeleteId = id;
 		// Show the delete confirmation dialog
@@ -147,6 +155,7 @@ else
 
 	private async void ConfirmDelete_Click(bool deleteConfirmed)
 	{
+		_interceptor.MonitorEvent();
 		if (deleteConfirmed)
 		{
 			await FoodLogService.DeleteFoodLog(ToDeleteId);
@@ -154,5 +163,9 @@ else
 			// redraw the remaining logs
 			await InvokeAsync(StateHasChanged);
 		}
+	}
+	public void Dispose()
+	{
+		_interceptor.DisposeEvent();
 	}
 }
