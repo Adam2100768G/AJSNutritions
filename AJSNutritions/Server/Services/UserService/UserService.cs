@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace AJSNutritions.Server.Services.UserService;
 
+// Server side CRUD implementation for User
 public class UserService : IUserService
 { 
 	private readonly ApplicationDbContext _context;
@@ -27,6 +28,7 @@ public class UserService : IUserService
 	{
 		try
 		{
+			// Update the BMI before saving
 			user.Bmi = CalculateBmi(user);
 			_context.Users.Add(user);
 			await _context.SaveChangesAsync();
@@ -39,7 +41,7 @@ public class UserService : IUserService
 		}
 	}
 
-	public async Task<User> UpdateUser(int id, User user)
+	public async Task<User?> UpdateUser(int id, User user)
 	{
 		var toUpdate = await _context.Users.FindAsync(id);
 		if (toUpdate == null)
@@ -51,6 +53,7 @@ public class UserService : IUserService
 		toUpdate.DateOfBirth = user.DateOfBirth;
 		toUpdate.Address = user.Address;
 		toUpdate.Weight = user.Weight;
+		// Update the BMI before saving
 		toUpdate.Bmi = CalculateBmi(user);
 		toUpdate.Height = user.Height;
 		toUpdate.Gender = user.Gender;
@@ -83,6 +86,9 @@ public class UserService : IUserService
 		return true;
 	}
 
+	// Calculate BMI assuming weight is in kg and height is in cm
+	// BMI = weight / (height / 100)^2
+	// Take care of division by zero
 	private double CalculateBmi(User user)
 	{
 		double heightCm = user.Height ?? 0;

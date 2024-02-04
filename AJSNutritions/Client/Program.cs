@@ -23,6 +23,7 @@ Uri(builder.HostEnvironment.BaseAddress);
 
 // Supply HttpClient instances that include access tokens when making requests to the server project
 builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("AJSNutritions.ServerAPI"));
+// Add our services scoped to the current user
 builder.Services.AddScoped<IDishService, DishService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IStaffService, StaffService>();

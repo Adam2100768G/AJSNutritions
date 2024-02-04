@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace AJSNutritions.Server.Controllers
 {
+	// Server side CRUD REST controller for User
+	// Uses the IUserService interface to do the wor
 	[Route("api/[controller]")]
 	[ApiController]
 	public class UserController : ControllerBase

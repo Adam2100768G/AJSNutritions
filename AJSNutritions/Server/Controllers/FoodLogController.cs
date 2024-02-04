@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace AJSNutritions.Server.Controllers;
 
+// Server side CRUD REST controller for FoodLog
 [Route("api/[controller]")]
 [ApiController]
 public class FoodLogController : ControllerBase
@@ -15,7 +16,7 @@ public class FoodLogController : ControllerBase
 		_foodLogService = foodLogService;
 	}
 
-	// This version gets all food logs for a user
+	// This version gets all food logs for a user because food logs have User as the FK
 	[HttpGet("all/{userId}")]
 	public async Task<List<FoodLog>> GetFoodLogsForUser(int userId)
 	{
@@ -39,9 +40,9 @@ public class FoodLogController : ControllerBase
 
 	// PUT api/<FoodLogController>/5
 	[HttpPut("{id}")]
-	public async Task Put(int id, [FromBody] FoodLog value)
+	public async Task<FoodLog?> Put(int id, [FromBody] FoodLog value)
 	{
-		await _foodLogService.UpdateFoodLog(id, value);
+		return await _foodLogService.UpdateFoodLog(id, value);
 	}
 
 	// DELETE api/<FoodLogController>/5

@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace AJSNutritions.Server.Services.StaffService;
 
+// Server side CRUD implementation for Staff
 public class StaffService : IStaffService
 {
 	private readonly ApplicationDbContext _context;

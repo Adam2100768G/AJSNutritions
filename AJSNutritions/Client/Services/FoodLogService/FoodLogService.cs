@@ -29,7 +29,20 @@ public class FoodLogService : IFoodLogService
 
 	public async Task<FoodLog?> GetFoodLogById(int id)
 	{
-		return await _client.GetFromJsonAsync<FoodLog>($"api/foodlog/{id}");
+		var response = await _client.GetAsync($"api/foodlog/{id}");
+		if (!response.IsSuccessStatusCode)
+		{
+			return null;
+		}
+
+		try
+		{
+			return await response.Content.ReadFromJsonAsync<FoodLog>();
+		}
+		catch (Exception e)
+		{
+			return null;
+		}
 	}
 
 	public async Task<FoodLog?> CreateFoodLog(FoodLog foodLog)
@@ -46,12 +59,12 @@ public class FoodLogService : IFoodLogService
 	public async Task<FoodLog?> UpdateFoodLog(int id, FoodLog foodLog)
 	{
 		var response = await _client.PutAsJsonAsync($"api/foodlog/{id}", foodLog);
-		if (response.IsSuccessStatusCode)
+		if (!response.IsSuccessStatusCode)
 		{
-			return await response.Content.ReadFromJsonAsync<FoodLog>();
+			return null;
 		}
 
-		return null;
+		return await response.Content.ReadFromJsonAsync<FoodLog>();
 	}
 
 	public async Task DeleteFoodLog(int id)

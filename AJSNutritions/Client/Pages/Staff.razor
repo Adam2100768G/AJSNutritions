@@ -56,7 +56,7 @@ else
 						<div>
 							<label for="genderType">Gender</label>
 							<select id="genderType" class="form-control" @bind="@StaffData.Gender">
-								@foreach (var genderType in GenderTypes)
+								@foreach (var genderType in _genderTypes)
 								{
 									<option value="@genderType.Id">@genderType.Name</option>
 								}
@@ -151,7 +151,7 @@ else
 		NavigationManager.NavigateTo("/staffs");
 	}
 
-	List<GenderType> GenderTypes = new List<GenderType>
+	readonly List<GenderType> _genderTypes = new()
 	{
 		new GenderType(id: 1, name: "Male"),
 		new GenderType(id: 2, name: "Female"),
@@ -170,5 +170,4 @@ else
 		public int Id { get; set; }
 		public string Name { get; set; }
 	}
-
 }

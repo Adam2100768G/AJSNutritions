@@ -46,7 +46,7 @@
 </Confirm>
 
 @code {
-	private ConfirmBase DeleteConfirmation { get; set; }
+	private ConfirmBase? DeleteConfirmation { get; set; }
 	private int Id { get; set; }
 
 	protected override async Task OnInitializedAsync()
@@ -64,19 +64,20 @@
 		NavigationManager.NavigateTo("/dish");
 	}
 
-	private async void DeleteDish(int id)
+	private void DeleteDish(int id)
 	{
 		Id = id;
-		DeleteConfirmation.Show();
+		DeleteConfirmation?.Show();
 	}
 
 	private async void ConfirmDelete_Click(bool deleteConfirmed)
 	{
-		if (deleteConfirmed)
+		if (!deleteConfirmed)
 		{
-			await DishService.DeleteDish(Id);
-			await DishService.GetDishes();
-			await InvokeAsync(StateHasChanged);
+			return;
 		}
+		await DishService.DeleteDish(Id);
+		await DishService.GetDishes();
+		await InvokeAsync(StateHasChanged);
 	}
 }

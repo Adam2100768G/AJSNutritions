@@ -38,7 +38,7 @@ builder.Services.AddAuthentication().AddIdentityServerJwt();
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
-
+// Add our services
 builder.Services.AddScoped<IDishService, DishService>();
 builder.Services.AddScoped<IFoodLogService, FoodLogService>();
 builder.Services.AddScoped<IUserService, UserService>();

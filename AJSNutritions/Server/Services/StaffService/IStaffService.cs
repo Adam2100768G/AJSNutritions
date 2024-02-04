@@ -1,5 +1,6 @@
 ﻿using AJSNutritions.Shared.Domain;
 
+// Server side CRUD interface for Staff
 namespace AJSNutritions.Server.Services.StaffService
 {
 	public interface IStaffService

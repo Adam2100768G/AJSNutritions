@@ -52,7 +52,7 @@
 
 
 @code {
-	private ConfirmBase DeleteConfirmation { get; set; }
+	private ConfirmBase? DeleteConfirmation { get; set; }
 	private int Id { get; set; }
 
 	protected override async Task OnInitializedAsync()
@@ -73,16 +73,17 @@
 	private void DeleteUser(int id)
 	{
 		Id = id;
-		DeleteConfirmation.Show();
+		DeleteConfirmation?.Show();
 	}
 
 	private async void ConfirmDelete_Click(bool deleteConfirmed)
 	{
-		if (deleteConfirmed)
+		if (!deleteConfirmed)
 		{
-			await UserService.DeleteUser(Id);
-			await UserService.GetUsers();
-			await InvokeAsync(StateHasChanged);
+			return;
 		}
+		await UserService.DeleteUser(Id);
+		await UserService.GetUsers();
+		await InvokeAsync(StateHasChanged);
 	}
 }

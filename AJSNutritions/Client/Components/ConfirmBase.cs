@@ -2,6 +2,8 @@
 
 namespace AJSNutritions.Client.Components;
 
+// Helper for delete confirmation dialogs
+// From https://www.pragimtech.com/blog/blazor/delete-confirmation-dialog-in-blazor/
 public class ConfirmBase : ComponentBase
 {
 	protected bool ShowConfirmation { get; set; }

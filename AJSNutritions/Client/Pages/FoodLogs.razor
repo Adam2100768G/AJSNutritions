@@ -18,6 +18,7 @@ else
 	<thead>
 	<tr>
 		<th>Date</th>
+		<th>Description</th>
 		<th></th>
 	</tr>
 	</thead>
@@ -27,10 +28,15 @@ else
 	{
 		<tr>
 			<td>@foodLog.Date</td>
+			<td>@foodLog.Description</td>
 			<td>
 				<button class="btn btn-primary"
 				        @onclick="() => ShowFoodLog(foodLog.Id)">
 					<i class="oi oi-pencil"></i>
+				</button>
+				<button class="btn btn-danger"
+				        @onclick="() => DeleteFoodLog(foodLog.Id)">
+					<i class="oi oi-trash"></i>
 				</button>
 			</td>
 		</tr>
@@ -43,12 +49,40 @@ else
 </button>
 <button type="button" class="btn btn-secondary" @onclick="BackHome">Return</button>
 
+<Confirm @ref="DeleteConfirmation"
+         ConfirmationChanged="ConfirmDelete_Click"
+         ConfirmationMessage=@($"Are you sure you want to delete:")>
+
+</Confirm>
+
 @code {
+	// The user this the logs are for.
 	private AJSNutritions.Shared.Domain.User? User { get; set; }
 	private List<AJSNutritions.Shared.Domain.FoodLog> FoodLogData { get; set; } = new();
 	private string UserName { get; set; } = "unknown user";
+	// The name of the logged in user who is creating the food log for the CRUD operations
+	private string EditorName { get; set; } = "unknown";
+	// The delete confirmation component
+	private ConfirmBase? DeleteConfirmation { get; set; }
+	private int ToDeleteId { get; set; }
 
 	[Parameter] public int? Id { get; set; }
+
+	[CascadingParameter] private Task<AuthenticationState>? AuthenticationStateTask { get; set; }
+
+	protected override async Task OnInitializedAsync()
+	{
+		if (AuthenticationStateTask != null)
+		{
+			var authState = await AuthenticationStateTask;
+			var user = authState.User;
+
+			if (user.Identity is not null && user.Identity.IsAuthenticated)
+			{
+				EditorName = user.Identity.Name;
+			}
+		}
+	}
 
 	protected override async Task OnParametersSetAsync()
 	{
@@ -74,9 +108,28 @@ else
 		NavigationManager.NavigateTo($"/foodlog/{id}");
 	}
 
-	private void CreateFoodLog()
+	private async void CreateFoodLog()
 	{
-		NavigationManager.NavigateTo($"/test/{User.Id}");
+		if (User == null)
+		{
+			return;
+		}
+		// Create a new food log for the user
+		// Then navigate to the food log page to edit.
+		var created = await FoodLogService.CreateFoodLog(new AJSNutritions.Shared.Domain.FoodLog()
+		{
+			CreatedBy = EditorName,
+			DateCreated = DateTime.Now,
+			Date = DateTime.Now,
+			UserId = User.Id
+		});
+
+		if (created == null)
+		{
+			return;
+		}
+
+		NavigationManager.NavigateTo($"/foodlog/{created.Id}");
 	}
 	
 	private void BackHome()
@@ -84,4 +137,22 @@ else
 		NavigationManager.NavigateTo($"/");
 	}
 
+	private void DeleteFoodLog(int id)
+	{
+		// Remember the id of the food log to delete
+		ToDeleteId = id;
+		// Show the delete confirmation dialog
+		DeleteConfirmation?.Show();
+	}
+
+	private async void ConfirmDelete_Click(bool deleteConfirmed)
+	{
+		if (deleteConfirmed)
+		{
+			await FoodLogService.DeleteFoodLog(ToDeleteId);
+			FoodLogData = await FoodLogService.GetFoodLogs(User.Id);
+			// redraw the remaining logs
+			await InvokeAsync(StateHasChanged);
+		}
+	}
 }

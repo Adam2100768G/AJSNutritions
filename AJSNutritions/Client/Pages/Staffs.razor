@@ -2,7 +2,7 @@
 @inject IStaffService StaffService
 @inject NavigationManager NavigationManager
 
-<h3>Users</h3>
+<h3>Staff</h3>
 
 <table class="table">
 	<thead>
@@ -46,7 +46,7 @@
 
 
 @code {
-	private ConfirmBase DeleteConfirmation { get; set; }
+	private ConfirmBase? DeleteConfirmation { get; set; }
 	private int Id { get; set; }
 
 	protected override async Task OnInitializedAsync()
@@ -67,16 +67,17 @@
 	private void DeleteStaff(int id)
 	{
 		Id = id;
-		DeleteConfirmation.Show();
+		DeleteConfirmation?.Show();
 	}
 
 	private async void ConfirmDelete_Click(bool deleteConfirmed)
 	{
-		if (deleteConfirmed)
+		if (!deleteConfirmed)
 		{
-			await StaffService.DeleteStaff(Id);
-			await StaffService.GetStaffs();
-			await InvokeAsync(StateHasChanged);
+			return;
 		}
+		await StaffService.DeleteStaff(Id);
+		await StaffService.GetStaffs();
+		await InvokeAsync(StateHasChanged);
 	}
 }

@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace AJSNutritions.Shared.Domain
+﻿namespace AJSNutritions.Shared.Domain
 {
+	/*
+	 * BaseDomainModel is the base class for all domain models in the application.
+	 * It has properties to log when an entity was created or changed.
+	 */
 	public abstract class BaseDomainModel
 	{
 		public int Id { get; set; }

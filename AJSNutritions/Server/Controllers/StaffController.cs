@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace AJSNutritions.Server.Controllers
 {
+	// Server side CRUD REST controller for Staff
 	[Route("api/[controller]")]
 	[ApiController]
 	public class StaffController : ControllerBase

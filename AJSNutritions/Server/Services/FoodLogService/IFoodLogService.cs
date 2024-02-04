@@ -2,6 +2,7 @@
 
 namespace AJSNutritions.Server.Services.FoodLogService;
 
+// Server side CRUD interface for FoodLog
 public interface IFoodLogService
 {
 	Task<List<FoodLog>> GetFoodLogs(int userId);
@@ -10,7 +11,7 @@ public interface IFoodLogService
 
 	Task<FoodLog> CreateFoodLog(FoodLog foodLog);
 
-	Task<FoodLog> UpdateFoodLog(int id, FoodLog foodLog);
+	Task<FoodLog?> UpdateFoodLog(int id, FoodLog foodLog);
 
 	Task<bool> DeleteFoodLog(int id);
 }

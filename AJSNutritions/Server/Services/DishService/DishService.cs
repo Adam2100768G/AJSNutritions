@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace AJSNutritions.Server.Services.DishService;
 
+// Server side CRUD service for Dish
 public class DishService: IDishService
 {
 	private readonly ApplicationDbContext _context;
@@ -32,7 +33,7 @@ public class DishService: IDishService
 		return dish;
 	}
 
-	public async Task<Dish> UpdateDish(int id, Dish dish)
+	public async Task<Dish?> UpdateDish(int id, Dish dish)
 	{
 		var toUpdate = await _context.Dishes.FindAsync(id);
 		if (toUpdate == null)
