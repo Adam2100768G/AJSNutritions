@@ -21,6 +21,8 @@ namespace AJSNutritions.Server.Controllers
 		[HttpGet]
 		public async Task<List<User>> GetUsers()
 		{
+			//return NotFound();
+
 			return await _userService.GetUsers();
 		}
 
